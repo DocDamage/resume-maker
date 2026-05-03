@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import { Plus, Trash2, GripVertical, Copy } from "lucide-react";
 import { AIImproveButton } from "@/components/AIImproveButton";
 import type { ExperienceEntry } from "@/types/resume";
 import {
@@ -27,6 +27,7 @@ import { CSS } from "@dnd-kit/utilities";
 function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
   const updateExperience = useResumeStore((s) => s.updateExperience);
   const removeExperience = useResumeStore((s) => s.removeExperience);
+  const duplicateExperience = useResumeStore((s) => s.duplicateExperience);
 
   const {
     attributes,
@@ -130,14 +131,25 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
             </label>
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-destructive shrink-0"
-          onClick={() => removeExperience(entry.id)}
-        >
-          <Trash2 size={16} />
-        </Button>
+        <div className="flex flex-col gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-muted-foreground"
+            onClick={() => duplicateExperience(entry.id)}
+            title="Duplicate"
+          >
+            <Copy size={14} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-destructive"
+            onClick={() => removeExperience(entry.id)}
+          >
+            <Trash2 size={16} />
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-2 pl-7">

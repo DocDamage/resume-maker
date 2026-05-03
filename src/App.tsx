@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useResumeStore } from "@/stores/resumeStore";
 import { SectionNav, AppearancePanel } from "@/components/layout/SectionNav";
 import { ResumePreview } from "@/components/preview/ResumePreview";
@@ -8,9 +8,15 @@ import { ExperienceForm } from "@/components/forms/ExperienceForm";
 import { EducationForm } from "@/components/forms/EducationForm";
 import { SkillsForm } from "@/components/forms/SkillsForm";
 import { ProjectsForm } from "@/components/forms/ProjectsForm";
+import { CertificationsForm } from "@/components/forms/CertificationsForm";
+import { LanguagesForm } from "@/components/forms/LanguagesForm";
 import { UploadModal } from "@/components/UploadModal";
 import { AISettings } from "@/components/AISettings";
+import { JobMatcher } from "@/components/JobMatcher";
+import { FullRewrite } from "@/components/FullRewrite";
 import { Separator } from "@/components/ui/separator";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { decodeResumeFromUrl } from "@/utils/shareLink";
 
 function EditorPanel({ onUpload }: { onUpload: () => void }) {
   const activeSection = useResumeStore((s) => s.activeSection);
@@ -21,7 +27,6 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
         <h1 className="text-lg font-bold tracking-tight">Resume Builder</h1>
         <p className="text-xs text-muted-foreground">Build, upload, and improve your resume</p>
       </div>
-
       <div className="flex-1 overflow-y-auto">
         <SectionNav onUpload={onUpload} />
         <AppearancePanel />
@@ -32,8 +37,16 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
           {activeSection === "experience" && <ExperienceForm />}
           {activeSection === "education" && <EducationForm />}
           {activeSection === "skills" && <SkillsForm />}
+          {activeSection === "certifications" && <CertificationsForm />}
+          {activeSection === "languages" && <LanguagesForm />}
           {activeSection === "projects" && <ProjectsForm />}
           {activeSection === "ai-settings" && <AISettings />}
+          {activeSection === "ai-tools" && (
+            <div className="space-y-4">
+              <FullRewrite />
+              <JobMatcher />
+            </div>
+          )}
         </div>
         <div className="h-8" />
       </div>
@@ -43,6 +56,15 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
 
 export default function App() {
   const [uploadOpen, setUploadOpen] = useState(false);
+  const loadResume = useResumeStore((s) => s.loadResume);
+  useKeyboardShortcuts();
+
+  useEffect(() => {
+    const shared = decodeResumeFromUrl();
+    if (shared) {
+      loadResume(shared);
+    }
+  }, [loadResume]);
 
   return (
     <>

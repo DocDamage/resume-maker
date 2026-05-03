@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import { Plus, Trash2, GripVertical, Copy } from "lucide-react";
 import type { EducationEntry } from "@/types/resume";
 import {
   DndContext,
@@ -26,6 +26,7 @@ import { CSS } from "@dnd-kit/utilities";
 function EducationItem({ entry }: { entry: EducationEntry }) {
   const updateEducation = useResumeStore((s) => s.updateEducation);
   const removeEducation = useResumeStore((s) => s.removeEducation);
+  const duplicateEducation = useResumeStore((s) => s.duplicateEducation);
 
   const {
     attributes,
@@ -118,14 +119,25 @@ function EducationItem({ entry }: { entry: EducationEntry }) {
             />
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-destructive shrink-0"
-          onClick={() => removeEducation(entry.id)}
-        >
-          <Trash2 size={16} />
-        </Button>
+        <div className="flex flex-col gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-muted-foreground"
+            onClick={() => duplicateEducation(entry.id)}
+            title="Duplicate"
+          >
+            <Copy size={14} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-destructive"
+            onClick={() => removeEducation(entry.id)}
+          >
+            <Trash2 size={16} />
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -48,10 +48,30 @@ html, body, #root {
   }
 }
 
-/* A4 page sizing for preview */
+/* Paper sizing for preview */
 .a4-page {
   width: 210mm;
   min-height: 297mm;
+  padding: 20mm;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.letter-page {
+  width: 216mm;
+  min-height: 279mm;
+  padding: 20mm;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.legal-page {
+  width: 216mm;
+  min-height: 356mm;
   padding: 20mm;
   background: white;
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);

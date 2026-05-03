@@ -5,6 +5,8 @@ export const defaultSectionOrder = [
   "experience",
   "education",
   "skills",
+  "certifications",
+  "languages",
   "projects",
 ];
 
@@ -14,7 +16,10 @@ export const defaultResume: Resume = {
   template: "modern",
   accentColor: "#2563eb",
   font: "sans",
+  paperSize: "a4",
+  spacing: 1.0,
   sectionOrder: [...defaultSectionOrder],
+  photoUrl: undefined,
   personal: {
     fullName: "Alex Morgan",
     title: "Senior Frontend Engineer",
@@ -89,6 +94,27 @@ export const defaultResume: Resume = {
       description:
         "A collection of 50+ accessible React components published on npm with 10k+ weekly downloads.",
       link: "https://github.com/alexmorgan/ui-kit",
+    },
+  ],
+  certifications: [
+    {
+      id: crypto.randomUUID(),
+      name: "AWS Certified Solutions Architect",
+      issuer: "Amazon Web Services",
+      date: "2023-06",
+      link: "",
+    },
+  ],
+  languages: [
+    {
+      id: crypto.randomUUID(),
+      language: "English",
+      proficiency: "Native",
+    },
+    {
+      id: crypto.randomUUID(),
+      language: "Spanish",
+      proficiency: "Conversational",
     },
   ],
 };

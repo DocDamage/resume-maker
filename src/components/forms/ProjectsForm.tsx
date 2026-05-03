@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import { Plus, Trash2, GripVertical, Copy } from "lucide-react";
 import type { Project } from "@/types/resume";
 import {
   DndContext,
@@ -27,6 +27,7 @@ import { CSS } from "@dnd-kit/utilities";
 function ProjectItem({ project }: { project: Project }) {
   const updateProject = useResumeStore((s) => s.updateProject);
   const removeProject = useResumeStore((s) => s.removeProject);
+  const duplicateProject = useResumeStore((s) => s.duplicateProject);
 
   const {
     attributes,
@@ -90,14 +91,25 @@ function ProjectItem({ project }: { project: Project }) {
             />
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-destructive shrink-0"
-          onClick={() => removeProject(project.id)}
-        >
-          <Trash2 size={16} />
-        </Button>
+        <div className="flex flex-col gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-muted-foreground"
+            onClick={() => duplicateProject(project.id)}
+            title="Duplicate"
+          >
+            <Copy size={14} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-destructive"
+            onClick={() => removeProject(project.id)}
+          >
+            <Trash2 size={16} />
+          </Button>
+        </div>
       </div>
     </div>
   );

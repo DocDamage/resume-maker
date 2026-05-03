@@ -201,7 +201,10 @@ function buildResumeFromParsed(parsed: Partial<Resume>): Resume {
     template: "modern",
     accentColor: "#2563eb",
     font: "sans",
-    sectionOrder: ["summary", "experience", "education", "skills", "projects"],
+    paperSize: "a4",
+    spacing: 1.0,
+    photoUrl: undefined,
+    sectionOrder: ["summary", "experience", "education", "skills", "certifications", "languages", "projects"],
     personal: {
       fullName: parsed.personal?.fullName || "",
       title: parsed.personal?.title || "",
@@ -247,6 +250,8 @@ function buildResumeFromParsed(parsed: Partial<Resume>): Resume {
         description: proj.description || "",
         link: proj.link || "",
       })) || [],
+    certifications: parsed.certifications?.map((cert) => ({ ...cert, id: crypto.randomUUID() })) || [],
+    languages: parsed.languages?.map((lang) => ({ ...lang, id: crypto.randomUUID() })) || [],
   };
 }
 
@@ -258,7 +263,10 @@ function buildResumeFromText(text: string): Resume {
     template: "modern",
     accentColor: "#2563eb",
     font: "sans",
-    sectionOrder: ["summary", "experience", "education", "skills", "projects"],
+    paperSize: "a4",
+    spacing: 1.0,
+    photoUrl: undefined,
+    sectionOrder: ["summary", "experience", "education", "skills", "certifications", "languages", "projects"],
     personal: {
       fullName: "",
       title: "",
@@ -273,5 +281,7 @@ function buildResumeFromText(text: string): Resume {
     education: [],
     skills: [],
     projects: [],
+    certifications: [],
+    languages: [],
   };
 }

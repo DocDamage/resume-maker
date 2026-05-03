@@ -43,6 +43,20 @@ export const ProjectSchema = z.object({
   link: z.string().optional().or(z.literal("")),
 });
 
+export const CertificationSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1),
+  issuer: z.string(),
+  date: z.string(),
+  link: z.string().optional().or(z.literal("")),
+});
+
+export const LanguageSchema = z.object({
+  id: z.string(),
+  language: z.string().min(1),
+  proficiency: z.enum(["Native", "Fluent", "Conversational", "Basic"]),
+});
+
 export const ResumeSchema = z.object({
   id: z.string().default(() => crypto.randomUUID()),
   title: z.string().default("Untitled Resume"),
@@ -50,12 +64,17 @@ export const ResumeSchema = z.object({
   accentColor: z.string().default("#2563eb"),
   font: z.enum(["sans", "serif"]).default("sans"),
   sectionOrder: z.array(z.string()),
+  photoUrl: z.string().optional(),
+  paperSize: z.enum(["a4", "letter", "legal"]).default("a4"),
+  spacing: z.number().default(1.0),
   personal: PersonalInfoSchema,
   summary: z.string(),
   experience: z.array(ExperienceEntrySchema),
   education: z.array(EducationEntrySchema),
   skills: z.array(SkillCategorySchema),
   projects: z.array(ProjectSchema),
+  certifications: z.array(CertificationSchema).default([]),
+  languages: z.array(LanguageSchema).default([]),
 });
 
 export type PersonalInfo = z.infer<typeof PersonalInfoSchema>;
@@ -63,4 +82,6 @@ export type ExperienceEntry = z.infer<typeof ExperienceEntrySchema>;
 export type EducationEntry = z.infer<typeof EducationEntrySchema>;
 export type SkillCategory = z.infer<typeof SkillCategorySchema>;
 export type Project = z.infer<typeof ProjectSchema>;
+export type Certification = z.infer<typeof CertificationSchema>;
+export type Language = z.infer<typeof LanguageSchema>;
 export type Resume = z.infer<typeof ResumeSchema>;

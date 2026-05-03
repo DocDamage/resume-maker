@@ -1,14 +1,25 @@
 import { useResumeStore } from "@/stores/resumeStore";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function PersonalInfoForm() {
   const personal = useResumeStore((s) => s.resume.personal);
+  const photoUrl = useResumeStore((s) => s.resume.photoUrl);
   const setPersonal = useResumeStore((s) => s.setPersonal);
+  const setPhotoUrl = useResumeStore((s) => s.setPhotoUrl);
 
   const handleChange = (field: string, value: string) => {
     setPersonal({ ...personal, [field]: value });
+  };
+
+  const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => setPhotoUrl(String(ev.target?.result || ""));
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -17,6 +28,26 @@ export function PersonalInfoForm() {
         <CardTitle>Personal Information</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="flex items-center gap-4">
+          {photoUrl ? (
+            <img src={photoUrl} alt="" className="w-16 h-16 rounded-full object-cover border" />
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-muted border flex items-center justify-center text-xs text-muted-foreground">
+              No Photo
+            </div>
+          )}
+          <div>
+            <label className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors border border-border bg-background hover:bg-muted h-8 px-3 cursor-pointer text-xs">
+              {photoUrl ? "Change Photo" : "Add Photo"}
+              <input type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
+            </label>
+            {photoUrl && (
+              <Button variant="ghost" size="sm" className="text-destructive ml-2" onClick={() => setPhotoUrl(undefined)}>
+                Remove
+              </Button>
+            )}
+          </div>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="fullName">Full Name</Label>
