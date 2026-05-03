@@ -27,6 +27,8 @@ import { OfferComparison } from "@/components/OfferComparison";
 import { ResumeDiff } from "@/components/ResumeDiff";
 import { CareerTrajectory } from "@/components/CareerTrajectory";
 import { EmailTemplates } from "@/components/EmailTemplates";
+import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
+import { DataBackup } from "@/components/DataBackup";
 import { SmartSuggestionsPanel } from "@/components/SmartSuggestionsPanel";
 import { ATSHeatmap } from "@/components/ATSHeatmap";
 import { GapNarrative } from "@/components/GapNarrative";
@@ -111,11 +113,13 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
               <RecruiterShare />
               <PortfolioExporter />
               <ResumeReview />
+              <DataBackup />
             </div>
           )}
           {activeSection === "job-tracker" && (
             <div className="space-y-4">
               <JobTracker />
+              <AnalyticsDashboard />
             </div>
           )}
           {activeSection === "branches" && (
