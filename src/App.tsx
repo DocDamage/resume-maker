@@ -22,6 +22,9 @@ import { InterviewPrep } from "@/components/InterviewPrep";
 import { SmartSuggestionsPanel } from "@/components/SmartSuggestionsPanel";
 import { ATSHeatmap } from "@/components/ATSHeatmap";
 import { GapNarrative } from "@/components/GapNarrative";
+import { PortfolioExporter } from "@/components/PortfolioExporter";
+import { RecruiterShare } from "@/components/RecruiterShare";
+import { ResumeReview } from "@/components/ResumeReview";
 import { CustomCssPanel } from "@/components/CustomCssPanel";
 import { AccessibilityChecker } from "@/components/AccessibilityChecker";
 import { JobTracker } from "@/components/JobTracker";
@@ -82,6 +85,13 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
               <JobMatcher />
               <CoverLetterBuilder />
               <InterviewPrep />
+            </div>
+          )}
+          {activeSection === "share" && (
+            <div className="space-y-4">
+              <RecruiterShare />
+              <PortfolioExporter />
+              <ResumeReview />
             </div>
           )}
           {activeSection === "job-tracker" && (
