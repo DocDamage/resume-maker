@@ -168,10 +168,19 @@ export function AppearancePanel() {
 
         <div className="space-y-1.5">
           <label className="text-xs text-muted-foreground flex items-center gap-1"><LayoutTemplate size={12} /> Template</label>
-          <div className="grid grid-cols-5 gap-1">
+          <div className="grid grid-cols-5 gap-1.5">
             {templates.map((t) => (
-              <button key={t} onClick={() => setTemplate(t)} className={cn("text-[10px] py-1 rounded-md border capitalize transition-colors", template === t ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border hover:bg-muted")} title={t}>
-                {t.slice(0, 4)}
+              <button
+                key={t}
+                onClick={() => setTemplate(t)}
+                className={cn(
+                  "group relative rounded-md border p-1 transition-all hover:scale-105",
+                  template === t ? "border-primary ring-1 ring-primary" : "border-border hover:border-muted-foreground"
+                )}
+                title={t}
+              >
+                <TemplateThumbnail name={t} accent={accentColor} />
+                <span className={cn("block text-[9px] mt-1 capitalize text-center", template === t ? "text-primary font-medium" : "text-muted-foreground")}>{t.slice(0, 4)}</span>
               </button>
             ))}
           </div>
@@ -215,4 +224,82 @@ export function AppearancePanel() {
       </div>
     </div>
   );
+}
+
+
+function TemplateThumbnail({ name, accent }: { name: string; accent: string }) {
+  const thumbs: Record<string, React.ReactNode> = {
+    modern: (
+      <div className="h-8 w-full flex flex-col items-center gap-0.5">
+        <div className="w-3 h-1 rounded-sm" style={{ background: accent }} />
+        <div className="w-full h-px bg-border" />
+        <div className="w-full flex gap-0.5"><div className="w-2/3 h-0.5 bg-muted rounded-sm" /><div className="w-1/3 h-0.5 bg-muted rounded-sm" /></div>
+      </div>
+    ),
+    classic: (
+      <div className="h-8 w-full flex flex-col gap-0.5">
+        <div className="w-full h-0.5 bg-muted rounded-sm" />
+        <div className="w-full h-px bg-border" />
+        <div className="w-full flex gap-0.5"><div className="w-1/2 h-0.5 bg-muted rounded-sm" /><div className="w-1/2 h-0.5 bg-muted rounded-sm" /></div>
+      </div>
+    ),
+    minimal: (
+      <div className="h-8 w-full flex flex-col gap-0.5">
+        <div className="w-2/3 h-0.5 bg-muted rounded-sm" />
+        <div className="w-full h-px bg-border" />
+        <div className="w-full h-0.5 bg-muted rounded-sm" />
+      </div>
+    ),
+    sidebar: (
+      <div className="h-8 w-full flex gap-0.5">
+        <div className="w-1/3 h-full rounded-sm" style={{ background: accent, opacity: 0.3 }} />
+        <div className="w-2/3 flex flex-col gap-0.5"><div className="w-full h-0.5 bg-muted rounded-sm" /><div className="w-full h-0.5 bg-muted rounded-sm" /></div>
+      </div>
+    ),
+    executive: (
+      <div className="h-8 w-full flex flex-col gap-0.5">
+        <div className="w-full h-1 rounded-sm" style={{ background: accent }} />
+        <div className="w-full h-0.5 bg-muted rounded-sm" />
+        <div className="w-full h-px bg-border" />
+        <div className="w-full h-0.5 bg-muted rounded-sm" />
+      </div>
+    ),
+    creative: (
+      <div className="h-8 w-full flex flex-col items-center gap-0.5">
+        <div className="w-4 h-2 rounded-full" style={{ background: accent, opacity: 0.4 }} />
+        <div className="w-full h-0.5 bg-muted rounded-sm" />
+        <div className="w-2/3 h-0.5 bg-muted rounded-sm" />
+      </div>
+    ),
+    compact: (
+      <div className="h-8 w-full flex flex-col gap-0.5">
+        <div className="w-full flex gap-0.5"><div className="w-1/2 h-0.5 bg-muted rounded-sm" /><div className="w-1/2 h-0.5 bg-muted rounded-sm" /></div>
+        <div className="w-full flex gap-0.5"><div className="w-1/3 h-0.5 bg-muted rounded-sm" /><div className="w-2/3 h-0.5 bg-muted rounded-sm" /></div>
+        <div className="w-full h-0.5 bg-muted rounded-sm" />
+      </div>
+    ),
+    elegant: (
+      <div className="h-8 w-full flex flex-col items-center gap-0.5">
+        <div className="w-full h-px bg-border" />
+        <div className="w-2/3 h-0.5 bg-muted rounded-sm" />
+        <div className="w-full h-px bg-border" />
+      </div>
+    ),
+    technical: (
+      <div className="h-8 w-full flex flex-col gap-0.5">
+        <div className="w-full flex justify-between"><div className="w-1/2 h-0.5 bg-muted rounded-sm" /><div className="w-1/3 h-0.5 bg-muted rounded-sm" /></div>
+        <div className="w-full h-px bg-border" />
+        <div className="w-full h-0.5 bg-muted rounded-sm" />
+        <div className="w-full h-2 rounded-sm bg-muted/50" />
+      </div>
+    ),
+    academic: (
+      <div className="h-8 w-full flex flex-col items-center gap-0.5">
+        <div className="w-1/2 h-0.5 bg-muted rounded-sm" />
+        <div className="w-full h-px bg-border" />
+        <div className="w-full flex gap-0.5"><div className="w-2/3 h-0.5 bg-muted rounded-sm" /><div className="w-1/3 h-0.5 bg-muted rounded-sm" /></div>
+      </div>
+    ),
+  };
+  return <div className="w-full">{thumbs[name] || thumbs.modern}</div>;
 }

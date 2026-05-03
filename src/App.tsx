@@ -42,7 +42,10 @@ import { AccessibilityChecker } from "@/components/AccessibilityChecker";
 import { JobTracker } from "@/components/JobTracker";
 import { ResumeBranchManager } from "@/components/ResumeBranchManager";
 import { Separator } from "@/components/ui/separator";
+import { Toaster } from "@/components/ui/Toaster";
+import { GettingStarted } from "@/components/GettingStarted";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { useToast } from "@/hooks/useToast";
 import { decodeResumeFromUrl } from "@/utils/shareLink";
 import { cn } from "@/lib/utils";
 
@@ -51,6 +54,7 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
   const lastSaved = useResumeStore((s) => s.lastSaved);
   const title = useResumeStore((s) => s.resume.title);
   const setTitle = useResumeStore((s) => s.setTitle);
+  const { toasts, removeToast } = useToast();
 
   const timeAgo = () => {
     const diff = Math.floor((Date.now() - lastSaved) / 1000);
@@ -76,6 +80,8 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
         <AppearancePanel />
         <Separator className="my-2" />
         <div className="p-4 space-y-6">
+          <GettingStarted />
+          <Toaster toasts={toasts} onDismiss={removeToast} />
           {activeSection === "personal" && <PersonalInfoForm />}
           {activeSection === "summary" && <SummaryForm />}
           {activeSection === "experience" && <ExperienceForm />}
@@ -151,6 +157,12 @@ export default function App() {
     const shared = decodeResumeFromUrl();
     if (shared) loadResume(shared);
   }, [loadResume]);
+
+  useEffect(() => {
+    const handler = () => setUploadOpen(true);
+    window.addEventListener("open-upload", handler);
+    return () => window.removeEventListener("open-upload", handler);
+  }, []);
 
   useEffect(() => {
     if (darkMode) document.documentElement.classList.add("dark");

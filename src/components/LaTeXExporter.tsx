@@ -186,7 +186,7 @@ ${resume.languages.map((l) => `${escape(l.language)} (${escape(l.proficiency)})`
             type="checkbox"
             checked={includePhoto}
             onChange={(e) => setIncludePhoto(e.target.checked)}
-            className="rounded border"
+            className="rounded border-border text-primary focus:ring-primary"
           />
           Include photo placeholder (commented)
         </label>

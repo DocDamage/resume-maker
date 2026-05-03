@@ -20,7 +20,7 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Briefcase, Plus, BarChart3, TrendingUp, AlertCircle } from "lucide-react";
+import { Briefcase, Plus, BarChart3, TrendingUp, AlertCircle, Search, X } from "lucide-react";
 import { daysUntil } from "@/utils/jobParser";
 
 const STATUS_COLORS: Record<JobStatus, string> = {
@@ -103,6 +103,7 @@ export function JobTracker() {
   const moveJob = useJobStore((s) => s.moveJob);
   const reorderJobs = useJobStore((s) => s.reorderJobs);
   const [showImporter, setShowImporter] = useState(false);
+  const [search, setSearch] = useState("");
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -137,6 +138,14 @@ export function JobTracker() {
     }
   };
 
+  const filteredJobs = search.trim()
+    ? jobs.filter((j) =>
+        j.company.toLowerCase().includes(search.toLowerCase()) ||
+        j.role.toLowerCase().includes(search.toLowerCase()) ||
+        j.notes.toLowerCase().includes(search.toLowerCase())
+      )
+    : jobs;
+
   const total = jobs.length;
   const active = jobs.filter((j) => !["rejected", "ghosted", "offer"].includes(j.status)).length;
   const offers = jobs.filter((j) => j.status === "offer").length;
@@ -154,10 +163,30 @@ export function JobTracker() {
           <Briefcase size={20} className="text-primary" />
           <h2 className="text-lg font-bold">Job Hunt Command Center</h2>
         </div>
-        <Button size="sm" onClick={() => setShowImporter(!showImporter)}>
-          <Plus size={14} className="mr-1" />
-          {showImporter ? "Close" : "Add Job"}
-        </Button>
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search jobs..."
+              className="h-8 w-44 rounded-md border border-border bg-background pl-8 pr-7 text-xs shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X size={12} />
+              </button>
+            )}
+          </div>
+          <Button size="sm" onClick={() => setShowImporter(!showImporter)}>
+            <Plus size={14} className="mr-1" />
+            {showImporter ? "Close" : "Add Job"}
+          </Button>
+        </div>
       </div>
 
       {showImporter && <JobUrlImporter />}
@@ -207,7 +236,7 @@ export function JobTracker() {
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <div className="flex gap-3 overflow-x-auto pb-2">
           {JOB_STATUSES.map((status) => (
-            <KanbanColumn key={status} status={status} jobs={jobs} />
+            <KanbanColumn key={status} status={status} jobs={filteredJobs} />
           ))}
         </div>
         {total === 0 && (
