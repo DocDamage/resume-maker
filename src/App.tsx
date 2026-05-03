@@ -21,6 +21,8 @@ import { CoverLetterBuilder } from "@/components/CoverLetterBuilder";
 import { InterviewPrep } from "@/components/InterviewPrep";
 import { InterviewQuestionGenerator } from "@/components/InterviewQuestionGenerator";
 import { LinkedInImporter } from "@/components/LinkedInImporter";
+import { ApplicationKit } from "@/components/ApplicationKit";
+import { SalaryEstimator } from "@/components/SalaryEstimator";
 import { SmartSuggestionsPanel } from "@/components/SmartSuggestionsPanel";
 import { ATSHeatmap } from "@/components/ATSHeatmap";
 import { GapNarrative } from "@/components/GapNarrative";
@@ -83,9 +85,11 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
               <SmartSuggestionsPanel />
               <ATSHeatmap />
               <GapNarrative />
+              <SalaryEstimator />
               <FullRewrite />
               <JobMatcher />
               <CoverLetterBuilder />
+              <ApplicationKit />
               <InterviewQuestionGenerator />
               <InterviewPrep />
             </div>
