@@ -21,6 +21,8 @@ import { CoverLetterBuilder } from "@/components/CoverLetterBuilder";
 import { InterviewPrep } from "@/components/InterviewPrep";
 import { CustomCssPanel } from "@/components/CustomCssPanel";
 import { AccessibilityChecker } from "@/components/AccessibilityChecker";
+import { JobTracker } from "@/components/JobTracker";
+import { ResumeBranchManager } from "@/components/ResumeBranchManager";
 import { Separator } from "@/components/ui/separator";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { decodeResumeFromUrl } from "@/utils/shareLink";
@@ -74,6 +76,16 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
               <JobMatcher />
               <CoverLetterBuilder />
               <InterviewPrep />
+            </div>
+          )}
+          {activeSection === "job-tracker" && (
+            <div className="space-y-4">
+              <JobTracker />
+            </div>
+          )}
+          {activeSection === "branches" && (
+            <div className="space-y-4">
+              <ResumeBranchManager />
             </div>
           )}
           {activeSection === "custom-css" && <CustomCssPanel />}

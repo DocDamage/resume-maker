@@ -5,9 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { calculateATSScore } from "@/utils/atsScore";
 import { useResumeStore } from "@/stores/resumeStore";
-import { Loader2, Target, CheckCircle } from "lucide-react";
+import { Loader2, Target, CheckCircle, Plus } from "lucide-react";
 import { aiChat } from "@/utils/aiEngine";
 import { useAIStore } from "@/stores/aiStore";
+import { useJobStore } from "@/stores/jobStore";
+import { detectJobSource, extractCompanyAndRole, extractSalary, extractLocation, detectRemote } from "@/utils/jobParser";
 
 export function JobMatcher() {
   const [jd, setJd] = useState("");
@@ -20,6 +22,7 @@ export function JobMatcher() {
 
   const resume = useResumeStore((s) => s.resume);
   const provider = useAIStore((s) => s.provider);
+  const addJob = useJobStore((s) => s.addJob);
 
   const handleAnalyze = async () => {
     if (!jd.trim()) return;
@@ -56,6 +59,26 @@ export function JobMatcher() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSaveToTracker = () => {
+    if (!jd.trim()) return;
+    const meta = extractCompanyAndRole(jd);
+    const source = detectJobSource("");
+    addJob({
+      company: meta.company || "Unknown Company",
+      role: meta.role || "Unknown Role",
+      sourceURL: "",
+      sourceBoard: source,
+      jobDescription: jd,
+      status: "wishlist",
+      dateApplied: new Date().toISOString().split("T")[0],
+      notes: `Match score: ${result?.score ?? "?"}%`,
+      matchScore: result?.score,
+      salaryRange: extractSalary(jd),
+      location: extractLocation(jd),
+      remoteStatus: detectRemote(jd),
+    });
   };
 
   return (
@@ -109,6 +132,9 @@ export function JobMatcher() {
                 ))}
               </div>
             )}
+            <Button variant="outline" size="sm" onClick={handleSaveToTracker}>
+              <Plus size={14} className="mr-1" /> Save to Job Tracker
+            </Button>
           </div>
         )}
       </CardContent>

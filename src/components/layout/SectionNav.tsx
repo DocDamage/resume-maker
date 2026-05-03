@@ -5,7 +5,7 @@ import {
   User, FileText, Briefcase, GraduationCap, Wrench, FolderGit2,
   Upload, Bot, Palette, Type, LayoutTemplate, Undo2, Redo2,
   Award, Globe, Sparkles, Eye, EyeOff, Moon, Sun, Code, Accessibility,
-  ShieldCheck,
+  ShieldCheck, GitBranch,
 } from "lucide-react";
 
 const sections = [
@@ -80,6 +80,12 @@ export function SectionNav({ onUpload }: SectionNavProps) {
         <Upload size={16} /> Upload Resume
       </Button>
 
+      <Button variant={activeSection === "job-tracker" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "job-tracker" && "bg-secondary font-medium")} onClick={() => setActiveSection("job-tracker")}>
+        <Briefcase size={16} /> Job Tracker
+      </Button>
+      <Button variant={activeSection === "branches" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "branches" && "bg-secondary font-medium")} onClick={() => setActiveSection("branches")}>
+        <GitBranch size={16} /> Branches
+      </Button>
       <Button variant={activeSection === "ai-tools" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "ai-tools" && "bg-secondary font-medium")} onClick={() => setActiveSection("ai-tools")}>
         <Sparkles size={16} /> AI Tools
       </Button>
