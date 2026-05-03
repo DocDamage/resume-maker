@@ -37,6 +37,7 @@ export const JobApplicationSchema = z.object({
   salaryRange: z.string().optional(),
   location: z.string().optional(),
   remoteStatus: z.enum(["onsite", "hybrid", "remote", "unknown"]).default("unknown"),
+  deadline: z.string().optional(),
 });
 
 export type JobStatus = z.infer<typeof JobStatusSchema>;

@@ -89,6 +89,9 @@ export function SectionNav({ onUpload }: SectionNavProps) {
       <Button variant={activeSection === "share" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "share" && "bg-secondary font-medium")} onClick={() => setActiveSection("share")}>
         <Share2 size={16} /> Share & Export
       </Button>
+      <Button variant={activeSection === "import" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "import" && "bg-secondary font-medium")} onClick={() => setActiveSection("import")}>
+        <Globe size={16} /> Import
+      </Button>
       <Button variant={activeSection === "ai-tools" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "ai-tools" && "bg-secondary font-medium")} onClick={() => setActiveSection("ai-tools")}>
         <Sparkles size={16} /> AI Tools
       </Button>

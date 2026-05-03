@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useJobStore } from "@/stores/jobStore";
-import { detectJobSource, extractSalary, extractLocation, detectRemote, extractCompanyAndRole } from "@/utils/jobParser";
+import { detectJobSource, extractSalary, extractLocation, detectRemote, extractCompanyAndRole, extractDeadline } from "@/utils/jobParser";
 import { SOURCE_LABELS, SOURCE_COLORS, type JobSource } from "@/types/job";
 import { Link2, Plus, Globe } from "lucide-react";
 
@@ -19,6 +19,7 @@ export function JobUrlImporter() {
     salary?: string;
     location?: string;
     remote: ReturnType<typeof detectRemote>;
+    deadline?: string;
   } | null>(null);
 
   const addJob = useJobStore((s) => s.addJob);
@@ -35,6 +36,7 @@ export function JobUrlImporter() {
       salary: extractSalary(text),
       location: extractLocation(text),
       remote: detectRemote(text),
+      deadline: extractDeadline(text),
     });
   };
 
@@ -54,6 +56,7 @@ export function JobUrlImporter() {
       salaryRange: detected.salary,
       location: detected.location,
       remoteStatus: detected.remote,
+      deadline: detected.deadline,
     });
     setUrl("");
     setJd("");

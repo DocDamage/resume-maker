@@ -2,8 +2,8 @@ import type { JobApplication } from "@/types/job";
 import { SOURCE_LABELS, SOURCE_COLORS } from "@/types/job";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { daysSince } from "@/utils/jobParser";
-import { Building2, MapPin, Calendar, Target, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { daysSince, daysUntil } from "@/utils/jobParser";
+import { Building2, MapPin, Calendar, Target, Trash2, ChevronDown, ChevronUp, Clock } from "lucide-react";
 import { useState } from "react";
 import { useJobStore } from "@/stores/jobStore";
 import { Button } from "@/components/ui/button";
@@ -43,6 +43,12 @@ export function JobApplicationCard({ job }: { job: JobApplication }) {
           {job.salaryRange && <span>{job.salaryRange}</span>}
           {job.remoteStatus !== "unknown" && (
             <span className="capitalize">{job.remoteStatus}</span>
+          )}
+          {job.deadline && (
+            <span className={`flex items-center gap-0.5 ${(daysUntil(job.deadline) ?? 999) < 3 ? "text-red-500 font-medium" : ""}`}>
+              <Clock size={10} />
+              {(daysUntil(job.deadline) ?? 999) < 0 ? "Expired" : (daysUntil(job.deadline) ?? 999) === 0 ? "Due today" : `${daysUntil(job.deadline)} days left`}
+            </span>
           )}
         </div>
 

@@ -74,9 +74,30 @@ export function extractCompanyAndRole(text: string): { company?: string; role?: 
   return { company, role };
 }
 
+export function extractDeadline(text: string): string | undefined {
+  const patterns = [
+    /(?:apply by|deadline|closes? on|applications? close|submit by)[:\s]+(\w+\s+\d{1,2}(?:,\s+\d{4})?)/i,
+    /(?:apply by|deadline|closes? on|applications? close|submit by)[:\s]+(\d{1,2}\/\d{1,2}(?:\/\d{2,4})?)/i,
+    /(?:apply by|deadline|closes? on|applications? close|submit by)[:\s]+(\d{4}-\d{2}-\d{2})/i,
+  ];
+  for (const p of patterns) {
+    const m = text.match(p);
+    if (m) return m[1];
+  }
+  return undefined;
+}
+
 export function daysSince(dateStr: string): number {
   const then = new Date(dateStr);
   const now = new Date();
   const diff = now.getTime() - then.getTime();
   return Math.floor(diff / (1000 * 60 * 60 * 24));
+}
+
+export function daysUntil(dateStr: string): number | null {
+  const then = new Date(dateStr);
+  const now = new Date();
+  if (isNaN(then.getTime())) return null;
+  const diff = then.getTime() - now.getTime();
+  return Math.ceil(diff / (1000 * 60 * 60 * 24));
 }

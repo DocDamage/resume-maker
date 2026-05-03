@@ -19,6 +19,8 @@ import { JobMatcher } from "@/components/JobMatcher";
 import { FullRewrite } from "@/components/FullRewrite";
 import { CoverLetterBuilder } from "@/components/CoverLetterBuilder";
 import { InterviewPrep } from "@/components/InterviewPrep";
+import { InterviewQuestionGenerator } from "@/components/InterviewQuestionGenerator";
+import { LinkedInImporter } from "@/components/LinkedInImporter";
 import { SmartSuggestionsPanel } from "@/components/SmartSuggestionsPanel";
 import { ATSHeatmap } from "@/components/ATSHeatmap";
 import { GapNarrative } from "@/components/GapNarrative";
@@ -84,7 +86,13 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
               <FullRewrite />
               <JobMatcher />
               <CoverLetterBuilder />
+              <InterviewQuestionGenerator />
               <InterviewPrep />
+            </div>
+          )}
+          {activeSection === "import" && (
+            <div className="space-y-4">
+              <LinkedInImporter />
             </div>
           )}
           {activeSection === "share" && (

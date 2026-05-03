@@ -20,7 +20,8 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Briefcase, Plus, BarChart3, TrendingUp } from "lucide-react";
+import { Briefcase, Plus, BarChart3, TrendingUp, AlertCircle } from "lucide-react";
+import { daysUntil } from "@/utils/jobParser";
 
 const STATUS_COLORS: Record<JobStatus, string> = {
   wishlist: "bg-slate-100 dark:bg-slate-800",
@@ -160,6 +161,27 @@ export function JobTracker() {
       </div>
 
       {showImporter && <JobUrlImporter />}
+
+      {(() => {
+        const upcoming = jobs
+          .filter((j) => j.deadline && (daysUntil(j.deadline) ?? -1) >= 0 && (daysUntil(j.deadline) ?? 999) <= 7)
+          .sort((a, b) => (daysUntil(a.deadline!) ?? 999) - (daysUntil(b.deadline!) ?? 999));
+        if (upcoming.length === 0) return null;
+        return (
+          <div className="rounded-md border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 p-3 space-y-1.5">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-yellow-800 dark:text-yellow-300">
+              <AlertCircle size={12} /> Upcoming Deadlines
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {upcoming.map((j) => (
+                <div key={j.id} className="text-[10px] bg-white dark:bg-slate-800 px-2 py-1 rounded border">
+                  <strong>{j.company}</strong> — {daysUntil(j.deadline!)} days
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       <div className="flex gap-3 flex-wrap">
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
