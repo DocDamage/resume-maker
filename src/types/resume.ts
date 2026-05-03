@@ -57,6 +57,58 @@ export const LanguageSchema = z.object({
   proficiency: z.enum(["Native", "Fluent", "Conversational", "Basic"]),
 });
 
+export const ReferenceSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1),
+  title: z.string(),
+  company: z.string(),
+  email: z.string(),
+  phone: z.string().optional().or(z.literal("")),
+});
+
+export const AwardSchema = z.object({
+  id: z.string(),
+  title: z.string().min(1),
+  issuer: z.string(),
+  date: z.string(),
+  description: z.string().optional().or(z.literal("")),
+});
+
+export const VolunteerEntrySchema = z.object({
+  id: z.string(),
+  organization: z.string().min(1),
+  role: z.string().min(1),
+  startDate: z.string(),
+  endDate: z.string(),
+  current: z.boolean().default(false),
+  description: z.array(z.string()),
+});
+
+export const CustomSectionSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1),
+  items: z.array(z.object({
+    id: z.string(),
+    title: z.string(),
+    subtitle: z.string().optional().or(z.literal("")),
+    date: z.string().optional().or(z.literal("")),
+    description: z.string().optional().or(z.literal("")),
+  })),
+});
+
+export const SectionVisibilitySchema = z.record(z.string(), z.boolean()).default({
+  summary: true,
+  experience: true,
+  education: true,
+  skills: true,
+  certifications: true,
+  languages: true,
+  projects: true,
+  references: true,
+  awards: true,
+  volunteer: true,
+});
+
 export const ResumeSchema = z.object({
   id: z.string().default(() => crypto.randomUUID()),
   title: z.string().default("Untitled Resume"),
@@ -67,6 +119,7 @@ export const ResumeSchema = z.object({
   photoUrl: z.string().optional(),
   paperSize: z.enum(["a4", "letter", "legal"]).default("a4"),
   spacing: z.number().default(1.0),
+  darkMode: z.boolean().default(false),
   personal: PersonalInfoSchema,
   summary: z.string(),
   experience: z.array(ExperienceEntrySchema),
@@ -75,6 +128,12 @@ export const ResumeSchema = z.object({
   projects: z.array(ProjectSchema),
   certifications: z.array(CertificationSchema).default([]),
   languages: z.array(LanguageSchema).default([]),
+  references: z.array(ReferenceSchema).default([]),
+  awards: z.array(AwardSchema).default([]),
+  volunteer: z.array(VolunteerEntrySchema).default([]),
+  customSections: z.array(CustomSectionSchema).default([]),
+  visibility: SectionVisibilitySchema,
+  customCss: z.string().optional(),
 });
 
 export type PersonalInfo = z.infer<typeof PersonalInfoSchema>;
@@ -84,4 +143,8 @@ export type SkillCategory = z.infer<typeof SkillCategorySchema>;
 export type Project = z.infer<typeof ProjectSchema>;
 export type Certification = z.infer<typeof CertificationSchema>;
 export type Language = z.infer<typeof LanguageSchema>;
+export type Reference = z.infer<typeof ReferenceSchema>;
+export type Award = z.infer<typeof AwardSchema>;
+export type VolunteerEntry = z.infer<typeof VolunteerEntrySchema>;
+export type CustomSection = z.infer<typeof CustomSectionSchema>;
 export type Resume = z.infer<typeof ResumeSchema>;

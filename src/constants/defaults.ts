@@ -8,7 +8,23 @@ export const defaultSectionOrder = [
   "certifications",
   "languages",
   "projects",
+  "awards",
+  "volunteer",
+  "references",
 ];
+
+export const defaultVisibility = {
+  summary: true,
+  experience: true,
+  education: true,
+  skills: true,
+  certifications: true,
+  languages: true,
+  projects: true,
+  references: true,
+  awards: true,
+  volunteer: true,
+};
 
 export const defaultResume: Resume = {
   id: crypto.randomUUID(),
@@ -18,8 +34,10 @@ export const defaultResume: Resume = {
   font: "sans",
   paperSize: "a4",
   spacing: 1.0,
+  darkMode: false,
   sectionOrder: [...defaultSectionOrder],
   photoUrl: undefined,
+  customCss: "",
   personal: {
     fullName: "Alex Morgan",
     title: "Senior Frontend Engineer",
@@ -71,50 +89,42 @@ export const defaultResume: Resume = {
     },
   ],
   skills: [
-    {
-      id: crypto.randomUUID(),
-      category: "Languages",
-      skills: ["TypeScript", "JavaScript", "Python", "HTML", "CSS"],
-    },
-    {
-      id: crypto.randomUUID(),
-      category: "Frameworks",
-      skills: ["React", "Next.js", "Vue.js", "Tailwind CSS", "Node.js"],
-    },
-    {
-      id: crypto.randomUUID(),
-      category: "Tools",
-      skills: ["Git", "Docker", "Webpack", "Vite", "Figma"],
-    },
+    { id: crypto.randomUUID(), category: "Languages", skills: ["TypeScript", "JavaScript", "Python", "HTML", "CSS"] },
+    { id: crypto.randomUUID(), category: "Frameworks", skills: ["React", "Next.js", "Vue.js", "Tailwind CSS", "Node.js"] },
+    { id: crypto.randomUUID(), category: "Tools", skills: ["Git", "Docker", "Webpack", "Vite", "Figma"] },
   ],
   projects: [
     {
       id: crypto.randomUUID(),
       name: "Open Source UI Kit",
-      description:
-        "A collection of 50+ accessible React components published on npm with 10k+ weekly downloads.",
+      description: "A collection of 50+ accessible React components published on npm with 10k+ weekly downloads.",
       link: "https://github.com/alexmorgan/ui-kit",
     },
   ],
   certifications: [
-    {
-      id: crypto.randomUUID(),
-      name: "AWS Certified Solutions Architect",
-      issuer: "Amazon Web Services",
-      date: "2023-06",
-      link: "",
-    },
+    { id: crypto.randomUUID(), name: "AWS Certified Solutions Architect", issuer: "Amazon Web Services", date: "2023-06", link: "" },
   ],
   languages: [
+    { id: crypto.randomUUID(), language: "English", proficiency: "Native" },
+    { id: crypto.randomUUID(), language: "Spanish", proficiency: "Conversational" },
+  ],
+  references: [
+    { id: crypto.randomUUID(), name: "Sarah Johnson", title: "Engineering Manager", company: "TechCorp Inc.", email: "sarah.j@example.com", phone: "" },
+  ],
+  awards: [
+    { id: crypto.randomUUID(), title: "Employee of the Year", issuer: "TechCorp Inc.", date: "2023-12", description: "Recognized for exceptional leadership and technical contributions." },
+  ],
+  volunteer: [
     {
       id: crypto.randomUUID(),
-      language: "English",
-      proficiency: "Native",
-    },
-    {
-      id: crypto.randomUUID(),
-      language: "Spanish",
-      proficiency: "Conversational",
+      organization: "Code for Good",
+      role: "Mentor",
+      startDate: "2022-01",
+      endDate: "",
+      current: true,
+      description: ["Mentored 15 underrepresented students in web development.", "Organized monthly coding workshops for local high schools."],
     },
   ],
+  customSections: [],
+  visibility: { ...defaultVisibility },
 };

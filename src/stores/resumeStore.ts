@@ -1,13 +1,7 @@
 import { create } from "zustand";
 import type {
-  Resume,
-  PersonalInfo,
-  ExperienceEntry,
-  EducationEntry,
-  SkillCategory,
-  Project,
-  Certification,
-  Language,
+  Resume, PersonalInfo, ExperienceEntry, EducationEntry, SkillCategory,
+  Project, Certification, Language, Reference, Award, VolunteerEntry, CustomSection,
 } from "@/types/resume";
 import { defaultResume } from "@/constants/defaults";
 import { saveToStorage } from "@/utils/storage";
@@ -17,47 +11,49 @@ interface ResumeState {
   past: Resume[];
   future: Resume[];
   activeSection: string;
+  lastSaved: number;
 }
 
 interface ResumeActions {
   setActiveSection: (section: string) => void;
+  setLastSaved: (ts: number) => void;
+
   setPersonal: (data: PersonalInfo) => void;
   setSummary: (summary: string) => void;
 
-  addExperience: () => void;
-  updateExperience: (id: string, data: Partial<ExperienceEntry>) => void;
-  removeExperience: (id: string) => void;
-  reorderExperience: (ids: string[]) => void;
-  duplicateExperience: (id: string) => void;
+  addExperience: () => void; updateExperience: (id: string, data: Partial<ExperienceEntry>) => void;
+  removeExperience: (id: string) => void; reorderExperience: (ids: string[]) => void; duplicateExperience: (id: string) => void;
 
-  addEducation: () => void;
-  updateEducation: (id: string, data: Partial<EducationEntry>) => void;
-  removeEducation: (id: string) => void;
-  reorderEducation: (ids: string[]) => void;
-  duplicateEducation: (id: string) => void;
+  addEducation: () => void; updateEducation: (id: string, data: Partial<EducationEntry>) => void;
+  removeEducation: (id: string) => void; reorderEducation: (ids: string[]) => void; duplicateEducation: (id: string) => void;
 
-  addSkillCategory: () => void;
-  updateSkillCategory: (id: string, data: Partial<SkillCategory>) => void;
-  removeSkillCategory: (id: string) => void;
-  addSkill: (categoryId: string, skill: string) => void;
-  removeSkill: (categoryId: string, skill: string) => void;
+  addSkillCategory: () => void; updateSkillCategory: (id: string, data: Partial<SkillCategory>) => void;
+  removeSkillCategory: (id: string) => void; addSkill: (categoryId: string, skill: string) => void; removeSkill: (categoryId: string, skill: string) => void;
 
-  addProject: () => void;
-  updateProject: (id: string, data: Partial<Project>) => void;
-  removeProject: (id: string) => void;
-  reorderProjects: (ids: string[]) => void;
-  duplicateProject: (id: string) => void;
+  addProject: () => void; updateProject: (id: string, data: Partial<Project>) => void;
+  removeProject: (id: string) => void; reorderProjects: (ids: string[]) => void; duplicateProject: (id: string) => void;
 
-  addCertification: () => void;
-  updateCertification: (id: string, data: Partial<Certification>) => void;
-  removeCertification: (id: string) => void;
-  reorderCertifications: (ids: string[]) => void;
+  addCertification: () => void; updateCertification: (id: string, data: Partial<Certification>) => void;
+  removeCertification: (id: string) => void; reorderCertifications: (ids: string[]) => void;
 
-  addLanguage: () => void;
-  updateLanguage: (id: string, data: Partial<Language>) => void;
-  removeLanguage: (id: string) => void;
-  reorderLanguages: (ids: string[]) => void;
+  addLanguage: () => void; updateLanguage: (id: string, data: Partial<Language>) => void;
+  removeLanguage: (id: string) => void; reorderLanguages: (ids: string[]) => void;
 
+  addReference: () => void; updateReference: (id: string, data: Partial<Reference>) => void;
+  removeReference: (id: string) => void; reorderReferences: (ids: string[]) => void;
+
+  addAward: () => void; updateAward: (id: string, data: Partial<Award>) => void;
+  removeAward: (id: string) => void; reorderAwards: (ids: string[]) => void;
+
+  addVolunteer: () => void; updateVolunteer: (id: string, data: Partial<VolunteerEntry>) => void;
+  removeVolunteer: (id: string) => void; reorderVolunteer: (ids: string[]) => void; duplicateVolunteer: (id: string) => void;
+
+  addCustomSection: () => void; updateCustomSection: (id: string, data: Partial<CustomSection>) => void;
+  removeCustomSection: (id: string) => void; addCustomItem: (sectionId: string) => void;
+  updateCustomItem: (sectionId: string, itemId: string, data: Partial<CustomSection["items"][0]>) => void;
+  removeCustomItem: (sectionId: string, itemId: string) => void;
+
+  setVisibility: (section: string, visible: boolean) => void;
   setTemplate: (template: Resume["template"]) => void;
   setAccentColor: (color: string) => void;
   setFont: (font: Resume["font"]) => void;
@@ -65,9 +61,14 @@ interface ResumeActions {
   setPhotoUrl: (url: string | undefined) => void;
   setPaperSize: (size: Resume["paperSize"]) => void;
   setSpacing: (spacing: number) => void;
+  setDarkMode: (dark: boolean) => void;
+  setCustomCss: (css: string) => void;
+  setTitle: (title: string) => void;
 
   loadResume: (data: Resume) => void;
   resetResume: () => void;
+  duplicateResume: () => void;
+
   undo: () => void;
   redo: () => void;
   canUndo: () => boolean;
@@ -75,10 +76,7 @@ interface ResumeActions {
 }
 
 const initialResume = (() => {
-  try {
-    const raw = localStorage.getItem("resume-builder-data");
-    if (raw) return JSON.parse(raw) as Resume;
-  } catch { /* ignore */ }
+  try { const raw = localStorage.getItem("resume-builder-data"); if (raw) return JSON.parse(raw) as Resume; } catch { }
   return defaultResume;
 })();
 
@@ -90,7 +88,7 @@ function wrap(
     const next = updater(state);
     if ("resume" in next && next.resume) {
       saveToStorage(next.resume);
-      return { ...next, past: [...state.past, state.resume], future: [] };
+      return { ...next, past: [...state.past, state.resume], future: [], lastSaved: Date.now() };
     }
     return next;
   });
@@ -101,139 +99,86 @@ export const useResumeStore = create<ResumeState & ResumeActions>((set, get) => 
   past: [],
   future: [],
   activeSection: "personal",
+  lastSaved: Date.now(),
 
   setActiveSection: (section) => set({ activeSection: section }),
+  setLastSaved: (ts) => set({ lastSaved: ts }),
 
-  setPersonal: (data) => wrap(set, (state) => ({ resume: { ...state.resume, personal: data } })),
-  setSummary: (summary) => wrap(set, (state) => ({ resume: { ...state.resume, summary } })),
+  setPersonal: (data) => wrap(set, (s) => ({ resume: { ...s.resume, personal: data } })),
+  setSummary: (summary) => wrap(set, (s) => ({ resume: { ...s.resume, summary } })),
 
-  addExperience: () => wrap(set, (state) => {
-    const entry: ExperienceEntry = { id: crypto.randomUUID(), company: "", role: "", startDate: "", endDate: "", current: false, description: [""] };
-    return { resume: { ...state.resume, experience: [...state.resume.experience, entry] } };
-  }),
-  updateExperience: (id, data) => wrap(set, (state) => ({
-    resume: { ...state.resume, experience: state.resume.experience.map((e) => e.id === id ? { ...e, ...data } : e) },
-  })),
-  removeExperience: (id) => wrap(set, (state) => ({
-    resume: { ...state.resume, experience: state.resume.experience.filter((e) => e.id !== id) },
-  })),
-  reorderExperience: (ids) => wrap(set, (state) => {
-    const map = new Map(state.resume.experience.map((e) => [e.id, e]));
-    return { resume: { ...state.resume, experience: ids.map((id) => map.get(id)!).filter(Boolean) } };
-  }),
-  duplicateExperience: (id) => wrap(set, (state) => {
-    const original = state.resume.experience.find((e) => e.id === id);
-    if (!original) return {};
-    const copy = { ...original, id: crypto.randomUUID() };
-    return { resume: { ...state.resume, experience: [...state.resume.experience, copy] } };
-  }),
+  addExperience: () => wrap(set, (s) => ({ resume: { ...s.resume, experience: [...s.resume.experience, { id: crypto.randomUUID(), company: "", role: "", startDate: "", endDate: "", current: false, description: [""] }] } })),
+  updateExperience: (id, data) => wrap(set, (s) => ({ resume: { ...s.resume, experience: s.resume.experience.map((e) => e.id === id ? { ...e, ...data } : e) } })),
+  removeExperience: (id) => wrap(set, (s) => ({ resume: { ...s.resume, experience: s.resume.experience.filter((e) => e.id !== id) } })),
+  reorderExperience: (ids) => wrap(set, (s) => { const map = new Map(s.resume.experience.map((e) => [e.id, e])); return { resume: { ...s.resume, experience: ids.map((id) => map.get(id)!).filter(Boolean) } }; }),
+  duplicateExperience: (id) => wrap(set, (s) => { const orig = s.resume.experience.find((e) => e.id === id); if (!orig) return {}; const copy = { ...orig, id: crypto.randomUUID() }; return { resume: { ...s.resume, experience: [...s.resume.experience, copy] } }; }),
 
-  addEducation: () => wrap(set, (state) => {
-    const entry: EducationEntry = { id: crypto.randomUUID(), institution: "", degree: "", field: "", startDate: "", endDate: "", gpa: "" };
-    return { resume: { ...state.resume, education: [...state.resume.education, entry] } };
-  }),
-  updateEducation: (id, data) => wrap(set, (state) => ({
-    resume: { ...state.resume, education: state.resume.education.map((e) => e.id === id ? { ...e, ...data } : e) },
-  })),
-  removeEducation: (id) => wrap(set, (state) => ({
-    resume: { ...state.resume, education: state.resume.education.filter((e) => e.id !== id) },
-  })),
-  reorderEducation: (ids) => wrap(set, (state) => {
-    const map = new Map(state.resume.education.map((e) => [e.id, e]));
-    return { resume: { ...state.resume, education: ids.map((id) => map.get(id)!).filter(Boolean) } };
-  }),
-  duplicateEducation: (id) => wrap(set, (state) => {
-    const original = state.resume.education.find((e) => e.id === id);
-    if (!original) return {};
-    const copy = { ...original, id: crypto.randomUUID() };
-    return { resume: { ...state.resume, education: [...state.resume.education, copy] } };
-  }),
+  addEducation: () => wrap(set, (s) => ({ resume: { ...s.resume, education: [...s.resume.education, { id: crypto.randomUUID(), institution: "", degree: "", field: "", startDate: "", endDate: "", gpa: "" }] } })),
+  updateEducation: (id, data) => wrap(set, (s) => ({ resume: { ...s.resume, education: s.resume.education.map((e) => e.id === id ? { ...e, ...data } : e) } })),
+  removeEducation: (id) => wrap(set, (s) => ({ resume: { ...s.resume, education: s.resume.education.filter((e) => e.id !== id) } })),
+  reorderEducation: (ids) => wrap(set, (s) => { const map = new Map(s.resume.education.map((e) => [e.id, e])); return { resume: { ...s.resume, education: ids.map((id) => map.get(id)!).filter(Boolean) } }; }),
+  duplicateEducation: (id) => wrap(set, (s) => { const orig = s.resume.education.find((e) => e.id === id); if (!orig) return {}; const copy = { ...orig, id: crypto.randomUUID() }; return { resume: { ...s.resume, education: [...s.resume.education, copy] } }; }),
 
-  addSkillCategory: () => wrap(set, (state) => {
-    const entry: SkillCategory = { id: crypto.randomUUID(), category: "New Category", skills: [] };
-    return { resume: { ...state.resume, skills: [...state.resume.skills, entry] } };
-  }),
-  updateSkillCategory: (id, data) => wrap(set, (state) => ({
-    resume: { ...state.resume, skills: state.resume.skills.map((s) => s.id === id ? { ...s, ...data } : s) },
-  })),
-  removeSkillCategory: (id) => wrap(set, (state) => ({
-    resume: { ...state.resume, skills: state.resume.skills.filter((s) => s.id !== id) },
-  })),
-  addSkill: (categoryId, skill) => wrap(set, (state) => ({
-    resume: { ...state.resume, skills: state.resume.skills.map((s) => s.id === categoryId ? { ...s, skills: [...s.skills, skill] } : s) },
-  })),
-  removeSkill: (categoryId, skill) => wrap(set, (state) => ({
-    resume: { ...state.resume, skills: state.resume.skills.map((s) => s.id === categoryId ? { ...s, skills: s.skills.filter((sk) => sk !== skill) } : s) },
-  })),
+  addSkillCategory: () => wrap(set, (s) => ({ resume: { ...s.resume, skills: [...s.resume.skills, { id: crypto.randomUUID(), category: "New Category", skills: [] }] } })),
+  updateSkillCategory: (id, data) => wrap(set, (s) => ({ resume: { ...s.resume, skills: s.resume.skills.map((c) => c.id === id ? { ...c, ...data } : c) } })),
+  removeSkillCategory: (id) => wrap(set, (s) => ({ resume: { ...s.resume, skills: s.resume.skills.filter((c) => c.id !== id) } })),
+  addSkill: (cid, skill) => wrap(set, (s) => ({ resume: { ...s.resume, skills: s.resume.skills.map((c) => c.id === cid ? { ...c, skills: [...c.skills, skill] } : c) } })),
+  removeSkill: (cid, skill) => wrap(set, (s) => ({ resume: { ...s.resume, skills: s.resume.skills.map((c) => c.id === cid ? { ...c, skills: c.skills.filter((sk) => sk !== skill) } : c) } })),
 
-  addProject: () => wrap(set, (state) => {
-    const entry: Project = { id: crypto.randomUUID(), name: "", description: "", link: "" };
-    return { resume: { ...state.resume, projects: [...state.resume.projects, entry] } };
-  }),
-  updateProject: (id, data) => wrap(set, (state) => ({
-    resume: { ...state.resume, projects: state.resume.projects.map((p) => p.id === id ? { ...p, ...data } : p) },
-  })),
-  removeProject: (id) => wrap(set, (state) => ({
-    resume: { ...state.resume, projects: state.resume.projects.filter((p) => p.id !== id) },
-  })),
-  reorderProjects: (ids) => wrap(set, (state) => {
-    const map = new Map(state.resume.projects.map((p) => [p.id, p]));
-    return { resume: { ...state.resume, projects: ids.map((id) => map.get(id)!).filter(Boolean) } };
-  }),
-  duplicateProject: (id) => wrap(set, (state) => {
-    const original = state.resume.projects.find((p) => p.id === id);
-    if (!original) return {};
-    const copy = { ...original, id: crypto.randomUUID() };
-    return { resume: { ...state.resume, projects: [...state.resume.projects, copy] } };
-  }),
+  addProject: () => wrap(set, (s) => ({ resume: { ...s.resume, projects: [...s.resume.projects, { id: crypto.randomUUID(), name: "", description: "", link: "" }] } })),
+  updateProject: (id, data) => wrap(set, (s) => ({ resume: { ...s.resume, projects: s.resume.projects.map((p) => p.id === id ? { ...p, ...data } : p) } })),
+  removeProject: (id) => wrap(set, (s) => ({ resume: { ...s.resume, projects: s.resume.projects.filter((p) => p.id !== id) } })),
+  reorderProjects: (ids) => wrap(set, (s) => { const map = new Map(s.resume.projects.map((p) => [p.id, p])); return { resume: { ...s.resume, projects: ids.map((id) => map.get(id)!).filter(Boolean) } }; }),
+  duplicateProject: (id) => wrap(set, (s) => { const orig = s.resume.projects.find((p) => p.id === id); if (!orig) return {}; const copy = { ...orig, id: crypto.randomUUID() }; return { resume: { ...s.resume, projects: [...s.resume.projects, copy] } }; }),
 
-  addCertification: () => wrap(set, (state) => {
-    const entry: Certification = { id: crypto.randomUUID(), name: "", issuer: "", date: "", link: "" };
-    return { resume: { ...state.resume, certifications: [...state.resume.certifications, entry] } };
-  }),
-  updateCertification: (id, data) => wrap(set, (state) => ({
-    resume: { ...state.resume, certifications: state.resume.certifications.map((c) => c.id === id ? { ...c, ...data } : c) },
-  })),
-  removeCertification: (id) => wrap(set, (state) => ({
-    resume: { ...state.resume, certifications: state.resume.certifications.filter((c) => c.id !== id) },
-  })),
-  reorderCertifications: (ids) => wrap(set, (state) => {
-    const map = new Map(state.resume.certifications.map((c) => [c.id, c]));
-    return { resume: { ...state.resume, certifications: ids.map((id) => map.get(id)!).filter(Boolean) } };
-  }),
+  addCertification: () => wrap(set, (s) => ({ resume: { ...s.resume, certifications: [...s.resume.certifications, { id: crypto.randomUUID(), name: "", issuer: "", date: "", link: "" }] } })),
+  updateCertification: (id, data) => wrap(set, (s) => ({ resume: { ...s.resume, certifications: s.resume.certifications.map((c) => c.id === id ? { ...c, ...data } : c) } })),
+  removeCertification: (id) => wrap(set, (s) => ({ resume: { ...s.resume, certifications: s.resume.certifications.filter((c) => c.id !== id) } })),
+  reorderCertifications: (ids) => wrap(set, (s) => { const map = new Map(s.resume.certifications.map((c) => [c.id, c])); return { resume: { ...s.resume, certifications: ids.map((id) => map.get(id)!).filter(Boolean) } }; }),
 
-  addLanguage: () => wrap(set, (state) => {
-    const entry: Language = { id: crypto.randomUUID(), language: "", proficiency: "Conversational" };
-    return { resume: { ...state.resume, languages: [...state.resume.languages, entry] } };
-  }),
-  updateLanguage: (id, data) => wrap(set, (state) => ({
-    resume: { ...state.resume, languages: state.resume.languages.map((l) => l.id === id ? { ...l, ...data } : l) },
-  })),
-  removeLanguage: (id) => wrap(set, (state) => ({
-    resume: { ...state.resume, languages: state.resume.languages.filter((l) => l.id !== id) },
-  })),
-  reorderLanguages: (ids) => wrap(set, (state) => {
-    const map = new Map(state.resume.languages.map((l) => [l.id, l]));
-    return { resume: { ...state.resume, languages: ids.map((id) => map.get(id)!).filter(Boolean) } };
-  }),
+  addLanguage: () => wrap(set, (s) => ({ resume: { ...s.resume, languages: [...s.resume.languages, { id: crypto.randomUUID(), language: "", proficiency: "Conversational" }] } })),
+  updateLanguage: (id, data) => wrap(set, (s) => ({ resume: { ...s.resume, languages: s.resume.languages.map((l) => l.id === id ? { ...l, ...data } : l) } })),
+  removeLanguage: (id) => wrap(set, (s) => ({ resume: { ...s.resume, languages: s.resume.languages.filter((l) => l.id !== id) } })),
+  reorderLanguages: (ids) => wrap(set, (s) => { const map = new Map(s.resume.languages.map((l) => [l.id, l])); return { resume: { ...s.resume, languages: ids.map((id) => map.get(id)!).filter(Boolean) } }; }),
 
-  setTemplate: (template) => wrap(set, (state) => ({ resume: { ...state.resume, template } })),
-  setAccentColor: (accentColor) => wrap(set, (state) => ({ resume: { ...state.resume, accentColor } })),
-  setFont: (font) => wrap(set, (state) => ({ resume: { ...state.resume, font } })),
-  setSectionOrder: (sectionOrder) => wrap(set, (state) => ({ resume: { ...state.resume, sectionOrder } })),
-  setPhotoUrl: (photoUrl) => wrap(set, (state) => ({ resume: { ...state.resume, photoUrl } })),
-  setPaperSize: (paperSize) => wrap(set, (state) => ({ resume: { ...state.resume, paperSize } })),
-  setSpacing: (spacing) => wrap(set, (state) => ({ resume: { ...state.resume, spacing } })),
+  addReference: () => wrap(set, (s) => ({ resume: { ...s.resume, references: [...s.resume.references, { id: crypto.randomUUID(), name: "", title: "", company: "", email: "", phone: "" }] } })),
+  updateReference: (id, data) => wrap(set, (s) => ({ resume: { ...s.resume, references: s.resume.references.map((r) => r.id === id ? { ...r, ...data } : r) } })),
+  removeReference: (id) => wrap(set, (s) => ({ resume: { ...s.resume, references: s.resume.references.filter((r) => r.id !== id) } })),
+  reorderReferences: (ids) => wrap(set, (s) => { const map = new Map(s.resume.references.map((r) => [r.id, r])); return { resume: { ...s.resume, references: ids.map((id) => map.get(id)!).filter(Boolean) } }; }),
 
-  loadResume: (data) => {
-    saveToStorage(data);
-    set({ resume: data, past: [], future: [] });
-  },
-  resetResume: () => {
-    const resume = { ...defaultResume, id: crypto.randomUUID() };
-    saveToStorage(resume);
-    set({ resume, past: [], future: [] });
-  },
+  addAward: () => wrap(set, (s) => ({ resume: { ...s.resume, awards: [...s.resume.awards, { id: crypto.randomUUID(), title: "", issuer: "", date: "", description: "" }] } })),
+  updateAward: (id, data) => wrap(set, (s) => ({ resume: { ...s.resume, awards: s.resume.awards.map((a) => a.id === id ? { ...a, ...data } : a) } })),
+  removeAward: (id) => wrap(set, (s) => ({ resume: { ...s.resume, awards: s.resume.awards.filter((a) => a.id !== id) } })),
+  reorderAwards: (ids) => wrap(set, (s) => { const map = new Map(s.resume.awards.map((a) => [a.id, a])); return { resume: { ...s.resume, awards: ids.map((id) => map.get(id)!).filter(Boolean) } }; }),
+
+  addVolunteer: () => wrap(set, (s) => ({ resume: { ...s.resume, volunteer: [...s.resume.volunteer, { id: crypto.randomUUID(), organization: "", role: "", startDate: "", endDate: "", current: false, description: [""] }] } })),
+  updateVolunteer: (id, data) => wrap(set, (s) => ({ resume: { ...s.resume, volunteer: s.resume.volunteer.map((v) => v.id === id ? { ...v, ...data } : v) } })),
+  removeVolunteer: (id) => wrap(set, (s) => ({ resume: { ...s.resume, volunteer: s.resume.volunteer.filter((v) => v.id !== id) } })),
+  reorderVolunteer: (ids) => wrap(set, (s) => { const map = new Map(s.resume.volunteer.map((v) => [v.id, v])); return { resume: { ...s.resume, volunteer: ids.map((id) => map.get(id)!).filter(Boolean) } }; }),
+  duplicateVolunteer: (id) => wrap(set, (s) => { const orig = s.resume.volunteer.find((v) => v.id === id); if (!orig) return {}; const copy = { ...orig, id: crypto.randomUUID() }; return { resume: { ...s.resume, volunteer: [...s.resume.volunteer, copy] } }; }),
+
+  addCustomSection: () => wrap(set, (s) => ({ resume: { ...s.resume, customSections: [...s.resume.customSections, { id: crypto.randomUUID(), name: "Custom Section", items: [] }] } })),
+  updateCustomSection: (id, data) => wrap(set, (s) => ({ resume: { ...s.resume, customSections: s.resume.customSections.map((cs) => cs.id === id ? { ...cs, ...data } : cs) } })),
+  removeCustomSection: (id) => wrap(set, (s) => ({ resume: { ...s.resume, customSections: s.resume.customSections.filter((cs) => cs.id !== id) } })),
+  addCustomItem: (sectionId) => wrap(set, (s) => ({ resume: { ...s.resume, customSections: s.resume.customSections.map((cs) => cs.id === sectionId ? { ...cs, items: [...cs.items, { id: crypto.randomUUID(), title: "", subtitle: "", date: "", description: "" }] } : cs) } })),
+  updateCustomItem: (sectionId, itemId, data) => wrap(set, (s) => ({ resume: { ...s.resume, customSections: s.resume.customSections.map((cs) => cs.id === sectionId ? { ...cs, items: cs.items.map((it) => it.id === itemId ? { ...it, ...data } : it) } : cs) } })),
+  removeCustomItem: (sectionId, itemId) => wrap(set, (s) => ({ resume: { ...s.resume, customSections: s.resume.customSections.map((cs) => cs.id === sectionId ? { ...cs, items: cs.items.filter((it) => it.id !== itemId) } : cs) } })),
+
+  setVisibility: (section, visible) => wrap(set, (s) => ({ resume: { ...s.resume, visibility: { ...s.resume.visibility, [section]: visible } } })),
+  setTemplate: (template) => wrap(set, (s) => ({ resume: { ...s.resume, template } })),
+  setAccentColor: (accentColor) => wrap(set, (s) => ({ resume: { ...s.resume, accentColor } })),
+  setFont: (font) => wrap(set, (s) => ({ resume: { ...s.resume, font } })),
+  setSectionOrder: (sectionOrder) => wrap(set, (s) => ({ resume: { ...s.resume, sectionOrder } })),
+  setPhotoUrl: (photoUrl) => wrap(set, (s) => ({ resume: { ...s.resume, photoUrl } })),
+  setPaperSize: (paperSize) => wrap(set, (s) => ({ resume: { ...s.resume, paperSize } })),
+  setSpacing: (spacing) => wrap(set, (s) => ({ resume: { ...s.resume, spacing } })),
+  setDarkMode: (darkMode) => wrap(set, (s) => ({ resume: { ...s.resume, darkMode } })),
+  setCustomCss: (customCss) => wrap(set, (s) => ({ resume: { ...s.resume, customCss } })),
+  setTitle: (title) => wrap(set, (s) => ({ resume: { ...s.resume, title } })),
+
+  loadResume: (data) => { saveToStorage(data); set({ resume: data, past: [], future: [] }); },
+  resetResume: () => { const resume = { ...defaultResume, id: crypto.randomUUID() }; saveToStorage(resume); set({ resume, past: [], future: [] }); },
+  duplicateResume: () => { const resume = { ...get().resume, id: crypto.randomUUID(), title: get().resume.title + " (Copy)" }; saveToStorage(resume); set({ resume, past: [], future: [] }); },
 
   undo: () => {
     const state = get();

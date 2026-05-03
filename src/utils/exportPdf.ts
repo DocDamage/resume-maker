@@ -1,7 +1,7 @@
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
-export async function exportToPDF(elementId: string, filename: string) {
+export async function exportToPDF(elementId: string, filename: string, darkMode?: boolean) {
   const element = document.getElementById(elementId);
   if (!element) return;
 
@@ -9,7 +9,7 @@ export async function exportToPDF(elementId: string, filename: string) {
     scale: 2,
     useCORS: true,
     logging: false,
-    backgroundColor: "#ffffff",
+    backgroundColor: darkMode ? "#0f172a" : "#ffffff",
   });
 
   const imgData = canvas.toDataURL("image/png");

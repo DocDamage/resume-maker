@@ -203,8 +203,10 @@ function buildResumeFromParsed(parsed: Partial<Resume>): Resume {
     font: "sans",
     paperSize: "a4",
     spacing: 1.0,
+    darkMode: false,
     photoUrl: undefined,
-    sectionOrder: ["summary", "experience", "education", "skills", "certifications", "languages", "projects"],
+    sectionOrder: ["summary", "experience", "education", "skills", "certifications", "languages", "projects", "awards", "volunteer", "references"],
+    customCss: "",
     personal: {
       fullName: parsed.personal?.fullName || "",
       title: parsed.personal?.title || "",
@@ -252,6 +254,15 @@ function buildResumeFromParsed(parsed: Partial<Resume>): Resume {
       })) || [],
     certifications: parsed.certifications?.map((cert) => ({ ...cert, id: crypto.randomUUID() })) || [],
     languages: parsed.languages?.map((lang) => ({ ...lang, id: crypto.randomUUID() })) || [],
+    references: parsed.references?.map((ref) => ({ ...ref, id: crypto.randomUUID() })) || [],
+    awards: parsed.awards?.map((a) => ({ ...a, id: crypto.randomUUID() })) || [],
+    volunteer: parsed.volunteer?.map((v) => ({ ...v, id: crypto.randomUUID(), description: Array.isArray(v.description) ? v.description : [v.description || ""] })) || [],
+    customSections: [],
+    visibility: {
+      summary: true, experience: true, education: true, skills: true,
+      certifications: true, languages: true, projects: true,
+      references: true, awards: true, volunteer: true,
+    },
   };
 }
 
@@ -265,8 +276,10 @@ function buildResumeFromText(text: string): Resume {
     font: "sans",
     paperSize: "a4",
     spacing: 1.0,
+    darkMode: false,
     photoUrl: undefined,
-    sectionOrder: ["summary", "experience", "education", "skills", "certifications", "languages", "projects"],
+    sectionOrder: ["summary", "experience", "education", "skills", "certifications", "languages", "projects", "awards", "volunteer", "references"],
+    customCss: "",
     personal: {
       fullName: "",
       title: "",
@@ -283,5 +296,14 @@ function buildResumeFromText(text: string): Resume {
     projects: [],
     certifications: [],
     languages: [],
+    references: [],
+    awards: [],
+    volunteer: [],
+    customSections: [],
+    visibility: {
+      summary: true, experience: true, education: true, skills: true,
+      certifications: true, languages: true, projects: true,
+      references: true, awards: true, volunteer: true,
+    },
   };
 }
