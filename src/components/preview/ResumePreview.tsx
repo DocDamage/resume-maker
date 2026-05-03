@@ -6,6 +6,11 @@ import { Download, FileJson, RotateCcw } from "lucide-react";
 import { TemplateModern } from "./TemplateModern";
 import { TemplateClassic } from "./TemplateClassic";
 import { TemplateMinimal } from "./TemplateMinimal";
+import { TemplateSidebar } from "./TemplateSidebar";
+import { TemplateExecutive } from "./TemplateExecutive";
+import { TemplateCreative } from "./TemplateCreative";
+import { TemplateCompact } from "./TemplateCompact";
+import { TemplateElegant } from "./TemplateElegant";
 
 export function ResumePreview() {
   const resume = useResumeStore((s) => s.resume);
@@ -40,16 +45,23 @@ export function ResumePreview() {
         alert("Invalid JSON file");
       }
     };
+    reader.onerror = () => alert("Failed to read file");
     reader.readAsText(file);
     e.target.value = "";
   };
 
-  const TemplateComponent =
-    resume.template === "classic"
-      ? TemplateClassic
-      : resume.template === "minimal"
-      ? TemplateMinimal
-      : TemplateModern;
+  const templates: Record<string, React.FC<{ resume: typeof resume }>> = {
+    modern: TemplateModern,
+    classic: TemplateClassic,
+    minimal: TemplateMinimal,
+    sidebar: TemplateSidebar,
+    executive: TemplateExecutive,
+    creative: TemplateCreative,
+    compact: TemplateCompact,
+    elegant: TemplateElegant,
+  };
+
+  const TemplateComponent = templates[resume.template] || TemplateModern;
 
   return (
     <div className="flex flex-col h-full">

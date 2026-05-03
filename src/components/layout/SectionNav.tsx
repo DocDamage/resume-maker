@@ -103,7 +103,7 @@ export function AppearancePanel() {
             <LayoutTemplate size={12} /> Template
           </label>
           <div className="flex gap-1">
-            {(["modern", "classic", "minimal"] as const).map((t) => (
+            {(["modern", "classic", "minimal", "sidebar", "executive", "creative", "compact", "elegant"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTemplate(t)}
