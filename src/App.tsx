@@ -23,6 +23,8 @@ import { InterviewQuestionGenerator } from "@/components/InterviewQuestionGenera
 import { LinkedInImporter } from "@/components/LinkedInImporter";
 import { ApplicationKit } from "@/components/ApplicationKit";
 import { SalaryEstimator } from "@/components/SalaryEstimator";
+import { OfferComparison } from "@/components/OfferComparison";
+import { ResumeDiff } from "@/components/ResumeDiff";
 import { SmartSuggestionsPanel } from "@/components/SmartSuggestionsPanel";
 import { ATSHeatmap } from "@/components/ATSHeatmap";
 import { GapNarrative } from "@/components/GapNarrative";
@@ -92,6 +94,7 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
               <ApplicationKit />
               <InterviewQuestionGenerator />
               <InterviewPrep />
+              <OfferComparison />
             </div>
           )}
           {activeSection === "import" && (
@@ -114,6 +117,7 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
           {activeSection === "branches" && (
             <div className="space-y-4">
               <ResumeBranchManager />
+              <ResumeDiff />
             </div>
           )}
           {activeSection === "custom-css" && <CustomCssPanel />}
