@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Trash2, GripVertical, Copy } from "lucide-react";
 import { AIImproveButton } from "@/components/AIImproveButton";
+import { BulletOptimizer } from "@/components/BulletOptimizer";
 import type { ExperienceEntry } from "@/types/resume";
 import {
   DndContext,
@@ -155,29 +156,38 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
       <div className="space-y-2 pl-7">
         <Label className="text-xs">Description</Label>
         {entry.description.map((bullet, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <span className="text-muted-foreground text-xs">•</span>
-            <Input
-              value={bullet}
-              onChange={(e) => handleBulletChange(i, e.target.value)}
-              placeholder="Describe your achievement or responsibility"
-              className="text-sm"
-            />
-            <AIImproveButton
-              type="bullet"
-              content={bullet}
-              onImproved={(text) => handleBulletChange(i, text)}
-              size="sm"
-              className="shrink-0"
-            />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 text-destructive shrink-0"
-              onClick={() => removeBullet(i)}
-            >
-              <Trash2 size={14} />
-            </Button>
+          <div key={i} className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground text-xs">•</span>
+              <Input
+                value={bullet}
+                onChange={(e) => handleBulletChange(i, e.target.value)}
+                placeholder="Describe your achievement or responsibility"
+                className="text-sm"
+              />
+              <AIImproveButton
+                type="bullet"
+                content={bullet}
+                onImproved={(text) => handleBulletChange(i, text)}
+                size="sm"
+                className="shrink-0"
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-destructive shrink-0"
+                onClick={() => removeBullet(i)}
+              >
+                <Trash2 size={14} />
+              </Button>
+            </div>
+            <div className="pl-4">
+              <BulletOptimizer
+                bullet={bullet}
+                context={{ company: entry.company, role: entry.role }}
+                onReplace={(text) => handleBulletChange(i, text)}
+              />
+            </div>
           </div>
         ))}
         <Button variant="ghost" size="sm" onClick={addBullet} className="text-xs">

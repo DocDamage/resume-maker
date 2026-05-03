@@ -19,6 +19,9 @@ import { JobMatcher } from "@/components/JobMatcher";
 import { FullRewrite } from "@/components/FullRewrite";
 import { CoverLetterBuilder } from "@/components/CoverLetterBuilder";
 import { InterviewPrep } from "@/components/InterviewPrep";
+import { SmartSuggestionsPanel } from "@/components/SmartSuggestionsPanel";
+import { ATSHeatmap } from "@/components/ATSHeatmap";
+import { GapNarrative } from "@/components/GapNarrative";
 import { CustomCssPanel } from "@/components/CustomCssPanel";
 import { AccessibilityChecker } from "@/components/AccessibilityChecker";
 import { JobTracker } from "@/components/JobTracker";
@@ -72,6 +75,9 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
           {activeSection === "ai-settings" && <AISettings />}
           {activeSection === "ai-tools" && (
             <div className="space-y-4">
+              <SmartSuggestionsPanel />
+              <ATSHeatmap />
+              <GapNarrative />
               <FullRewrite />
               <JobMatcher />
               <CoverLetterBuilder />

@@ -102,3 +102,20 @@ export async function aiChat(options: {
 
   return res.choices[0]?.message?.content ?? "";
 }
+
+export async function aiChatJSON<T>(options: {
+  system?: string;
+  messages: { role: "system" | "user"; content: string }[];
+  temperature?: number;
+}): Promise<T> {
+  const jsonSystem = `You are a helpful assistant. You MUST respond with valid JSON only. No markdown, no explanations outside the JSON. ${options.system ?? ""}`;
+  const text = await aiChat({
+    system: jsonSystem,
+    messages: options.messages,
+    temperature: options.temperature ?? 0.3,
+    response_format: { type: "json_object" },
+  });
+  // Extract JSON from potential markdown fences
+  const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+  return JSON.parse(cleaned) as T;
+}

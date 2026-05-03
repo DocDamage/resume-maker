@@ -8,6 +8,65 @@ export interface ATSScore {
   plainText: string;
 }
 
+export interface BulletAnalysis {
+  text: string;
+  hasMetric: boolean;
+  hasPowerVerb: boolean;
+  isPassive: boolean;
+  isTooLong: boolean;
+  wordCount: number;
+  score: number; // 0-100
+  suggestions: string[];
+}
+
+export function analyzeBullet(bullet: string): BulletAnalysis {
+  const text = bullet.trim();
+  const words = text.split(/\s+/).filter((w) => w.length > 0);
+  const wordCount = words.length;
+
+  // Power verbs
+  const powerVerbs = new Set([
+    "led", "managed", "built", "created", "developed", "designed", "implemented",
+    "launched", "spearheaded", "drove", "optimized", "improved", "increased",
+    "decreased", "reduced", "accelerated", "engineered", "architected",
+    "transformed", "revamped", "streamlined", "automated", "delivered",
+    "achieved", "grew", "scaled", " mentored", "trained", "negotiated",
+    "conducted", "performed", "executed", "oversaw", "directed", "coordinated",
+    "collaborated", "partnered", "facilitated", "initiated", "pioneered",
+    "generated", "produced", "secured", "won", "saved", "eliminated",
+  ]);
+  const firstWord = words[0]?.toLowerCase().replace(/[^a-z]/g, "");
+  const hasPowerVerb = firstWord ? powerVerbs.has(firstWord) : false;
+
+  // Metrics
+  const hasMetric = /\d+%?|\$\d+|\d+\+?\s*(x|times|fold)|\d+\s*(users|customers|clients|teams|people|members)/i.test(text);
+
+  // Passive voice heuristics
+  const passiveIndicators = /\b(was|were|been|being|is|are)\s+\w+ed\b|\b(has been|have been|had been)\s+\w+ed\b/i;
+  const isPassive = passiveIndicators.test(text);
+
+  // Length
+  const isTooLong = wordCount > 25;
+
+  // Score
+  let score = 50;
+  if (hasPowerVerb) score += 20;
+  if (hasMetric) score += 20;
+  if (!isPassive) score += 10;
+  if (!isTooLong) score += 10;
+  if (wordCount < 8) score -= 15;
+  score = Math.max(0, Math.min(100, score));
+
+  const suggestions: string[] = [];
+  if (!hasPowerVerb) suggestions.push("Start with a strong action verb (e.g., Led, Built, Drove)");
+  if (!hasMetric) suggestions.push("Add a number or percentage to quantify impact");
+  if (isPassive) suggestions.push("Use active voice instead of passive");
+  if (isTooLong) suggestions.push("Shorten to under 25 words for better scanability");
+  if (wordCount < 8) suggestions.push("Expand to show more specific impact");
+
+  return { text, hasMetric, hasPowerVerb, isPassive, isTooLong, wordCount, score, suggestions };
+}
+
 export function resumeToPlainText(resume: Resume): string {
   const parts: string[] = [];
   parts.push(resume.personal.fullName, resume.personal.title);

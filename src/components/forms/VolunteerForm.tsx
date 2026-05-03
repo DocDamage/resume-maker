@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Trash2, GripVertical } from "lucide-react";
+import { BulletOptimizer } from "@/components/BulletOptimizer";
 import type { VolunteerEntry } from "@/types/resume";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -42,10 +43,15 @@ function VolunteerItem({ entry }: { entry: VolunteerEntry }) {
       <div className="space-y-2 pl-7">
         <Label className="text-xs">Description</Label>
         {entry.description.map((bullet, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <span className="text-muted-foreground text-xs">•</span>
-            <Input value={bullet} onChange={(e) => handleBulletChange(i, e.target.value)} placeholder="Describe your contribution" className="text-sm" />
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => removeBullet(i)}><Trash2 size={14} /></Button>
+          <div key={i} className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground text-xs">•</span>
+              <Input value={bullet} onChange={(e) => handleBulletChange(i, e.target.value)} placeholder="Describe your contribution" className="text-sm" />
+              <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => removeBullet(i)}><Trash2 size={14} /></Button>
+            </div>
+            <div className="pl-4">
+              <BulletOptimizer bullet={bullet} context={{ company: entry.organization, role: entry.role }} onReplace={(text) => handleBulletChange(i, text)} />
+            </div>
           </div>
         ))}
         <Button variant="ghost" size="sm" onClick={addBullet} className="text-xs"><Plus size={14} className="mr-1" /> Add bullet</Button>
