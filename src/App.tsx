@@ -30,6 +30,7 @@ import { EmailTemplates } from "@/components/EmailTemplates";
 import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
 import { DataBackup } from "@/components/DataBackup";
 import { LaTeXExporter } from "@/components/LaTeXExporter";
+import { NetworkingTracker } from "@/components/NetworkingTracker";
 import { SmartSuggestionsPanel } from "@/components/SmartSuggestionsPanel";
 import { ATSHeatmap } from "@/components/ATSHeatmap";
 import { GapNarrative } from "@/components/GapNarrative";
@@ -130,6 +131,7 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
               <ResumeDiff />
             </div>
           )}
+          {activeSection === "networking" && <NetworkingTracker />}
           {activeSection === "custom-css" && <CustomCssPanel />}
           {activeSection === "accessibility" && <AccessibilityChecker />}
         </div>

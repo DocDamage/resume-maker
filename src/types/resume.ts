@@ -112,7 +112,7 @@ export const SectionVisibilitySchema = z.record(z.string(), z.boolean()).default
 export const ResumeSchema = z.object({
   id: z.string().default(() => crypto.randomUUID()),
   title: z.string().default("Untitled Resume"),
-  template: z.enum(["modern", "classic", "minimal", "sidebar", "executive", "creative", "compact", "elegant"]).default("modern"),
+  template: z.enum(["modern", "classic", "minimal", "sidebar", "executive", "creative", "compact", "elegant", "technical", "academic"]).default("modern"),
   accentColor: z.string().default("#2563eb"),
   font: z.enum(["sans", "serif"]).default("sans"),
   sectionOrder: z.array(z.string()),

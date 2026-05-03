@@ -5,7 +5,7 @@ import { exportToPDF } from "@/utils/exportPdf";
 import { exportToDOCX } from "@/utils/exportDocx";
 import { exportToMarkdown } from "@/utils/exportMarkdown";
 import { encodeResumeToUrl } from "@/utils/shareLink";
-import { Download, FileJson, RotateCcw, FileText, Share2, CheckCircle, FileCode } from "lucide-react";
+import { Download, FileJson, RotateCcw, FileText, Share2, CheckCircle, FileCode, FileType, ExternalLink } from "lucide-react";
 import { TemplateModern } from "./TemplateModern";
 import { TemplateClassic } from "./TemplateClassic";
 import { TemplateMinimal } from "./TemplateMinimal";
@@ -14,6 +14,10 @@ import { TemplateExecutive } from "./TemplateExecutive";
 import { TemplateCreative } from "./TemplateCreative";
 import { TemplateCompact } from "./TemplateCompact";
 import { TemplateElegant } from "./TemplateElegant";
+import { TemplateTechnical } from "./TemplateTechnical";
+import { TemplateAcademic } from "./TemplateAcademic";
+import { exportToPlainText } from "@/utils/exportPlainText";
+import { exportToGoogleDocs } from "@/utils/exportGoogleDocs";
 
 export function ResumePreview() {
   const resume = useResumeStore((s) => s.resume);
@@ -67,6 +71,21 @@ export function ResumePreview() {
     e.target.value = "";
   };
 
+  const handleExportPlainText = () => {
+    const text = exportToPlainText(resume);
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${resume.title || "resume"}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportGoogleDocs = () => {
+    exportToGoogleDocs(resume);
+  };
+
   const handleShare = () => {
     navigator.clipboard.writeText(encodeResumeToUrl(resume)).then(() => {
       setCopied(true);
@@ -83,7 +102,7 @@ export function ResumePreview() {
   const templates: Record<string, React.FC<{ resume: typeof resume }>> = {
     modern: TemplateModern, classic: TemplateClassic, minimal: TemplateMinimal,
     sidebar: TemplateSidebar, executive: TemplateExecutive, creative: TemplateCreative,
-    compact: TemplateCompact, elegant: TemplateElegant,
+    compact: TemplateCompact, elegant: TemplateElegant, technical: TemplateTechnical, academic: TemplateAcademic,
   };
 
   const TemplateComponent = templates[resume.template] || TemplateModern;
@@ -96,6 +115,8 @@ export function ResumePreview() {
           <Button variant="outline" size="sm" onClick={handleExportDOCX}><FileText size={16} className="mr-1" /> Word</Button>
           <Button variant="outline" size="sm" onClick={handleExportMarkdown}><FileCode size={16} className="mr-1" /> MD</Button>
           <Button variant="outline" size="sm" onClick={handleExportJSON}><FileJson size={16} className="mr-1" /> JSON</Button>
+          <Button variant="outline" size="sm" onClick={handleExportPlainText}><FileType size={16} className="mr-1" /> Text</Button>
+          <Button variant="outline" size="sm" onClick={handleExportGoogleDocs}><ExternalLink size={16} className="mr-1" /> Docs</Button>
           <label className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors border border-border bg-background hover:bg-muted h-8 px-3 cursor-pointer text-xs">
             Import JSON
             <input type="file" accept=".json" className="hidden" onChange={handleImportJSON} />
@@ -112,6 +133,15 @@ export function ResumePreview() {
       <div className="flex-1 overflow-auto p-6 bg-muted flex justify-center" id="resume-preview-container">
         <div className="a4-page" ref={previewRef} style={{ ...paperStyles[resume.paperSize], lineHeight: resume.spacing, backgroundColor: resume.darkMode ? "#0f172a" : "#ffffff", color: resume.darkMode ? "#e2e8f0" : "inherit" }}>
           {resume.customCss && <style>{resume.customCss}</style>}
+          <style>{`
+            @media print {
+              #resume-preview-container { background: white !important; padding: 0 !important; overflow: visible !important; }
+              .a4-page { box-shadow: none !important; margin: 0 !important; width: 100% !important; min-height: auto !important; }
+              #export-pdf-btn { display: none !important; }
+              button, nav, .no-print { display: none !important; }
+              body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            }
+          `}</style>
           <div id="resume-preview-content">
             <TemplateComponent resume={resume} />
           </div>

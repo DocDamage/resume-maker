@@ -5,7 +5,7 @@ import {
   User, FileText, Briefcase, GraduationCap, Wrench, FolderGit2,
   Upload, Bot, Palette, Type, LayoutTemplate, Undo2, Redo2,
   Award, Globe, Sparkles, Eye, EyeOff, Moon, Sun, Code, Accessibility,
-  ShieldCheck, GitBranch, Share2,
+  ShieldCheck, GitBranch, Share2, Users,
 } from "lucide-react";
 
 const sections = [
@@ -101,6 +101,9 @@ export function SectionNav({ onUpload }: SectionNavProps) {
       <Button variant={activeSection === "custom-css" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "custom-css" && "bg-secondary font-medium")} onClick={() => setActiveSection("custom-css")}>
         <Code size={16} /> Custom CSS
       </Button>
+      <Button variant={activeSection === "networking" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "networking" && "bg-secondary font-medium")} onClick={() => setActiveSection("networking")}>
+        <Users size={16} /> Networking
+      </Button>
       <Button variant={activeSection === "accessibility" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "accessibility" && "bg-secondary font-medium")} onClick={() => setActiveSection("accessibility")}>
         <Accessibility size={16} /> Accessibility
       </Button>
@@ -131,7 +134,7 @@ export function AppearancePanel() {
   const setSpacing = useResumeStore((s) => s.setSpacing);
   const setDarkMode = useResumeStore((s) => s.setDarkMode);
 
-  const templates = ["modern", "classic", "minimal", "sidebar", "executive", "creative", "compact", "elegant"] as const;
+  const templates = ["modern", "classic", "minimal", "sidebar", "executive", "creative", "compact", "elegant", "technical", "academic"] as const;
 
   return (
     <div className="flex flex-col gap-1 p-3 border-t mt-2">
