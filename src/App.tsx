@@ -25,6 +25,8 @@ import { ApplicationKit } from "@/components/ApplicationKit";
 import { SalaryEstimator } from "@/components/SalaryEstimator";
 import { OfferComparison } from "@/components/OfferComparison";
 import { ResumeDiff } from "@/components/ResumeDiff";
+import { CareerTrajectory } from "@/components/CareerTrajectory";
+import { EmailTemplates } from "@/components/EmailTemplates";
 import { SmartSuggestionsPanel } from "@/components/SmartSuggestionsPanel";
 import { ATSHeatmap } from "@/components/ATSHeatmap";
 import { GapNarrative } from "@/components/GapNarrative";
@@ -88,6 +90,7 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
               <ATSHeatmap />
               <GapNarrative />
               <SalaryEstimator />
+              <CareerTrajectory />
               <FullRewrite />
               <JobMatcher />
               <CoverLetterBuilder />
@@ -95,6 +98,7 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
               <InterviewQuestionGenerator />
               <InterviewPrep />
               <OfferComparison />
+              <EmailTemplates />
             </div>
           )}
           {activeSection === "import" && (
