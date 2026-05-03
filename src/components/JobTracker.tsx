@@ -183,23 +183,23 @@ export function JobTracker() {
         );
       })()}
 
-      <div className="flex gap-3 flex-wrap">
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      <div className="flex gap-3 flex-wrap items-center">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md">
           <BarChart3 size={12} />
-          {total} total
+          <span className="font-medium">{total}</span> total
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md">
           <TrendingUp size={12} />
-          {active} active
+          <span className="font-medium">{active}</span> active
         </div>
         {offers > 0 && (
-          <div className="flex items-center gap-1.5 text-xs text-green-600 font-medium">
+          <div className="flex items-center gap-1.5 text-xs text-green-700 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-md font-medium">
             {offers} offer{offers > 1 ? "s" : ""}
           </div>
         )}
         {avgMatch !== null && (
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            Avg match: {avgMatch}%
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md">
+            Avg match: <span className="font-medium">{avgMatch}%</span>
           </div>
         )}
       </div>
@@ -210,6 +210,16 @@ export function JobTracker() {
             <KanbanColumn key={status} status={status} jobs={jobs} />
           ))}
         </div>
+        {total === 0 && (
+          <div className="text-center py-12 border-2 border-dashed border-border rounded-lg">
+            <Briefcase size={40} className="mx-auto text-muted-foreground/40 mb-3" />
+            <p className="text-sm font-medium text-muted-foreground">No job applications yet</p>
+            <p className="text-xs text-muted-foreground mt-1">Track your job search by adding applications</p>
+            <Button size="sm" variant="outline" className="mt-3" onClick={() => setShowImporter(true)}>
+              <Plus size={14} className="mr-1" /> Add Your First Job
+            </Button>
+          </div>
+        )}
       </DndContext>
     </div>
   );

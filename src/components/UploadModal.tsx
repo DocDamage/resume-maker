@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { extractText } from "@/utils/extractText";
 import { parseResumeWithAI } from "@/utils/aiParser";
 import { useResumeStore } from "@/stores/resumeStore";
-import { Upload, FileText, Loader2, Sparkles, Type } from "lucide-react";
+import { Upload, FileText, Loader2, Sparkles, Type, AlertCircle } from "lucide-react";
 import type { Resume } from "@/types/resume";
 
 interface UploadModalProps {
@@ -89,10 +89,10 @@ export function UploadModal({ open, onClose }: UploadModalProps) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 transition-opacity">
       <Card className="w-full max-w-2xl max-h-[90vh] flex flex-col">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-xl">
             <Upload size={20} />
             Upload Resume
           </CardTitle>
@@ -110,7 +110,7 @@ export function UploadModal({ open, onClose }: UploadModalProps) {
               `}
             >
               <FileText size={40} className="mx-auto mb-3 text-muted-foreground" />
-              <p className="text-sm font-medium">
+              <p className="text-sm font-medium text-foreground">
                 {isExtracting ? (
                   <span className="flex items-center justify-center gap-2">
                     <Loader2 size={16} className="animate-spin" /> Extracting text...
@@ -177,9 +177,10 @@ export function UploadModal({ open, onClose }: UploadModalProps) {
           )}
 
           {error && (
-            <p className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+            <div className="flex items-start gap-2 text-sm text-destructive bg-destructive/10 border border-destructive/20 p-3 rounded-md">
+              <AlertCircle size={16} className="shrink-0 mt-0.5" />
               {error}
-            </p>
+            </div>
           )}
         </CardContent>
         <div className="p-4 border-t flex justify-end">

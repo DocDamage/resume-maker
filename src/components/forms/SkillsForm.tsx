@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X, Wrench } from "lucide-react";
 import { AIImproveButton } from "@/components/AIImproveButton";
 
 export function SkillsForm() {
@@ -57,10 +57,20 @@ export function SkillsForm() {
     }
   };
 
+  const totalSkills = skills.reduce((acc, s) => acc + s.skills.length, 0);
+
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Skills</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between pb-3">
+        <CardTitle className="flex items-center gap-2">
+          <Wrench size={18} />
+          Skills
+          {totalSkills > 0 && (
+            <span className="text-xs font-normal text-muted-foreground ml-1">
+              {totalSkills} total
+            </span>
+          )}
+        </CardTitle>
         <div className="flex gap-2">
           <AIImproveButton
             type="skills"
@@ -73,8 +83,18 @@ export function SkillsForm() {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
+        {skills.length === 0 && (
+          <div className="text-center py-8 border-2 border-dashed border-border rounded-lg">
+            <Wrench size={32} className="mx-auto text-muted-foreground/50 mb-3" />
+            <p className="text-sm font-medium text-muted-foreground">No skill categories yet</p>
+            <p className="text-xs text-muted-foreground mt-1">Group your skills by category (e.g., Languages, Frameworks, Tools)</p>
+            <Button size="sm" variant="outline" className="mt-3" onClick={addSkillCategory}>
+              <Plus size={14} className="mr-1" /> Add Category
+            </Button>
+          </div>
+        )}
         {skills.map((category) => (
-          <div key={category.id} className="border rounded-lg p-4 bg-card space-y-3">
+          <div key={category.id} className="border rounded-lg p-4 bg-card space-y-3 shadow-sm">
             <div className="flex items-center gap-2">
               <Input
                 value={category.category}
@@ -87,7 +107,7 @@ export function SkillsForm() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-destructive shrink-0"
+                className="text-destructive shrink-0 hover:bg-destructive/10"
                 onClick={() => removeSkillCategory(category.id)}
               >
                 <Trash2 size={16} />
@@ -95,16 +115,19 @@ export function SkillsForm() {
             </div>
             <div className="flex flex-wrap gap-2">
               {category.skills.map((skill) => (
-                <Badge key={skill} variant="secondary" className="gap-1 pr-1">
+                <Badge key={skill} variant="secondary" className="gap-1 pr-1 text-xs">
                   {skill}
                   <button
                     onClick={() => removeSkill(category.id, skill)}
-                    className="hover:text-destructive"
+                    className="hover:text-destructive transition-colors"
                   >
                     <X size={12} />
                   </button>
                 </Badge>
               ))}
+              {category.skills.length === 0 && (
+                <span className="text-xs text-muted-foreground italic">No skills added yet</span>
+              )}
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Add Skill</Label>

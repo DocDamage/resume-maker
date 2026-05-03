@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { aiChat } from "@/utils/aiEngine";
-import { Loader2, FileText, Wand2, Download } from "lucide-react";
+import { Loader2, FileText, Wand2, Download, AlertCircle } from "lucide-react";
 import { exportToPDF } from "@/utils/exportPdf";
 
 export function CoverLetterBuilder() {
@@ -12,15 +12,18 @@ export function CoverLetterBuilder() {
   const [jd, setJd] = useState("");
   const [letter, setLetter] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const wordCount = letter.trim().split(/\s+/).filter(Boolean).length;
 
   const handleGenerate = async () => {
     setLoading(true);
+    setError("");
     try {
       const prompt = `Write a professional cover letter for ${resume.personal.fullName}, a ${resume.personal.title}. Resume summary: ${resume.summary}. Key experience: ${resume.experience.map(e => e.role + " at " + e.company).join(", ")}. ${jd ? "Job description: " + jd : ""} Keep it under 300 words. Output only the cover letter text, no markdown.`;
       const result = await aiChat({ messages: [{ role: "user", content: prompt }], temperature: 0.5 });
       setLetter(result);
     } catch (err) {
-      alert(String(err));
+      setError(String(err));
     } finally {
       setLoading(false);
     }
@@ -35,20 +38,46 @@ export function CoverLetterBuilder() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2"><FileText size={20} /> Cover Letter Builder</CardTitle>
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2">
+          <FileText size={18} />
+          Cover Letter Builder
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Textarea value={jd} onChange={(e) => setJd(e.target.value)} placeholder="Paste job description (optional)..." rows={4} />
+        <Textarea
+          value={jd}
+          onChange={(e) => setJd(e.target.value)}
+          placeholder="Paste job description (optional)..."
+          rows={4}
+        />
         <Button onClick={handleGenerate} disabled={loading}>
           {loading ? <Loader2 size={16} className="animate-spin mr-1" /> : <Wand2 size={16} className="mr-1" />}
           Generate Cover Letter
         </Button>
+
+        {error && (
+          <div className="flex items-start gap-2 text-sm text-destructive bg-destructive/10 border border-destructive/20 p-3 rounded-md">
+            <AlertCircle size={16} className="shrink-0 mt-0.5" />
+            {error}
+          </div>
+        )}
+
         {letter && (
-          <>
-            <Textarea value={letter} onChange={(e) => setLetter(e.target.value)} rows={12} className="font-serif text-sm" />
-            <Button variant="outline" size="sm" onClick={handleExport}><Download size={14} className="mr-1" /> Export PDF</Button>
-          </>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">{wordCount} words</span>
+              <Button variant="outline" size="sm" onClick={handleExport}>
+                <Download size={14} className="mr-1" /> Export PDF
+              </Button>
+            </div>
+            <Textarea
+              value={letter}
+              onChange={(e) => setLetter(e.target.value)}
+              rows={12}
+              className="font-serif text-sm resize-y"
+            />
+          </div>
         )}
       </CardContent>
     </Card>

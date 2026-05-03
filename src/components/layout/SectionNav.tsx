@@ -5,7 +5,7 @@ import {
   User, FileText, Briefcase, GraduationCap, Wrench, FolderGit2,
   Upload, Bot, Palette, Type, LayoutTemplate, Undo2, Redo2,
   Award, Globe, Sparkles, Eye, EyeOff, Moon, Sun, Code, Accessibility,
-  ShieldCheck, GitBranch, Share2, Users,
+  ShieldCheck, GitBranch, Share2, Users, ChevronRight,
 } from "lucide-react";
 
 const sections = [
@@ -47,76 +47,93 @@ export function SectionNav({ onUpload }: SectionNavProps) {
 
   return (
     <div className="flex flex-col gap-1 p-3">
-      <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 py-2">
-        Sections
+      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-3 py-2">
+        Resume Sections
       </div>
       {sections.map((section) => {
         const Icon = section.icon;
         const isActive = activeSection === section.id;
         const isVisible = visibility[section.id] !== false;
         return (
-          <div key={section.id} className="flex items-center gap-1 mx-3">
+          <div key={section.id} className="flex items-center gap-1 mx-3 group">
             <Button
               variant={isActive ? "secondary" : "ghost"}
               size="sm"
-              className={cn("flex-1 justify-start gap-2 text-sm", isActive && "bg-secondary font-medium")}
+              className={cn(
+                "flex-1 justify-start gap-2 text-sm h-8 transition-all",
+                isActive && "bg-secondary font-medium shadow-sm"
+              )}
               onClick={() => setActiveSection(section.id)}
             >
-              <Icon size={16} />
+              <Icon size={15} className={cn(isActive && "text-primary")} />
               {section.label}
+              {isActive && <ChevronRight size={12} className="ml-auto text-muted-foreground opacity-50" />}
             </Button>
             <button
               onClick={() => setVisibility(section.id, !isVisible)}
-              className={cn("p-1.5 rounded-md text-muted-foreground hover:text-foreground transition-colors", !isVisible && "text-muted-foreground/30")}
+              className={cn(
+                "p-1.5 rounded-md text-muted-foreground hover:text-foreground transition-all opacity-0 group-hover:opacity-100 focus:opacity-100",
+                !isVisible && "opacity-30 group-hover:opacity-50"
+              )}
               title={isVisible ? "Hide section" : "Show section"}
             >
-              {isVisible ? <Eye size={14} /> : <EyeOff size={14} />}
+              {isVisible ? <Eye size={13} /> : <EyeOff size={13} />}
             </button>
           </div>
         );
       })}
 
-      <Button variant="outline" size="sm" className="justify-start gap-2 text-sm mt-2 mx-3" onClick={onUpload}>
-        <Upload size={16} /> Upload Resume
-      </Button>
-
-      <Button variant={activeSection === "job-tracker" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "job-tracker" && "bg-secondary font-medium")} onClick={() => setActiveSection("job-tracker")}>
-        <Briefcase size={16} /> Job Tracker
-      </Button>
-      <Button variant={activeSection === "branches" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "branches" && "bg-secondary font-medium")} onClick={() => setActiveSection("branches")}>
-        <GitBranch size={16} /> Branches
-      </Button>
-      <Button variant={activeSection === "share" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "share" && "bg-secondary font-medium")} onClick={() => setActiveSection("share")}>
-        <Share2 size={16} /> Share & Export
-      </Button>
-      <Button variant={activeSection === "import" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "import" && "bg-secondary font-medium")} onClick={() => setActiveSection("import")}>
-        <Globe size={16} /> Import
-      </Button>
-      <Button variant={activeSection === "ai-tools" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "ai-tools" && "bg-secondary font-medium")} onClick={() => setActiveSection("ai-tools")}>
-        <Sparkles size={16} /> AI Tools
-      </Button>
-      <Button variant={activeSection === "ai-settings" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "ai-settings" && "bg-secondary font-medium")} onClick={() => setActiveSection("ai-settings")}>
-        <Bot size={16} /> AI Settings
-      </Button>
-      <Button variant={activeSection === "custom-css" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "custom-css" && "bg-secondary font-medium")} onClick={() => setActiveSection("custom-css")}>
-        <Code size={16} /> Custom CSS
-      </Button>
-      <Button variant={activeSection === "networking" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "networking" && "bg-secondary font-medium")} onClick={() => setActiveSection("networking")}>
-        <Users size={16} /> Networking
-      </Button>
-      <Button variant={activeSection === "accessibility" ? "secondary" : "ghost"} size="sm" className={cn("justify-start gap-2 text-sm mt-1 mx-3", activeSection === "accessibility" && "bg-secondary font-medium")} onClick={() => setActiveSection("accessibility")}>
-        <Accessibility size={16} /> Accessibility
-      </Button>
-
-      <div className="flex gap-1 mt-2 mx-3">
-        <Button variant="ghost" size="sm" className="flex-1 gap-1" onClick={undo} disabled={!canUndo()}>
-          <Undo2 size={14} /> Undo
+      <div className="mt-3 mx-3">
+        <Button variant="outline" size="sm" className="w-full justify-start gap-2 text-sm h-8" onClick={onUpload}>
+          <Upload size={15} /> Upload Resume
         </Button>
-        <Button variant="ghost" size="sm" className="flex-1 gap-1" onClick={redo} disabled={!canRedo()}>
-          <Redo2 size={14} /> Redo
+      </div>
+
+      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-3 py-2 mt-2">
+        Tools
+      </div>
+
+      <div className="space-y-0.5 mx-3">
+        <NavButton id="job-tracker" icon={Briefcase} label="Job Tracker" />
+        <NavButton id="branches" icon={GitBranch} label="Branches" />
+        <NavButton id="networking" icon={Users} label="Networking" />
+        <NavButton id="share" icon={Share2} label="Share & Export" />
+        <NavButton id="import" icon={Globe} label="Import" />
+        <NavButton id="ai-tools" icon={Sparkles} label="AI Tools" />
+        <NavButton id="ai-settings" icon={Bot} label="AI Settings" />
+        <NavButton id="custom-css" icon={Code} label="Custom CSS" />
+        <NavButton id="accessibility" icon={Accessibility} label="Accessibility" />
+      </div>
+
+      <div className="flex gap-1 mt-3 mx-3">
+        <Button variant="ghost" size="sm" className="flex-1 gap-1 h-8 text-xs" onClick={undo} disabled={!canUndo()}>
+          <Undo2 size={13} /> Undo
+        </Button>
+        <Button variant="ghost" size="sm" className="flex-1 gap-1 h-8 text-xs" onClick={redo} disabled={!canRedo()}>
+          <Redo2 size={13} /> Redo
         </Button>
       </div>
     </div>
+  );
+}
+
+function NavButton({ id, icon: Icon, label }: { id: string; icon: React.ElementType; label: string }) {
+  const activeSection = useResumeStore((s) => s.activeSection);
+  const setActiveSection = useResumeStore((s) => s.setActiveSection);
+  const isActive = activeSection === id;
+  return (
+    <Button
+      variant={isActive ? "secondary" : "ghost"}
+      size="sm"
+      className={cn(
+        "w-full justify-start gap-2 text-sm h-8 transition-all",
+        isActive && "bg-secondary font-medium shadow-sm"
+      )}
+      onClick={() => setActiveSection(id)}
+    >
+      <Icon size={15} className={cn(isActive && "text-primary")} />
+      {label}
+    </Button>
   );
 }
 
@@ -138,7 +155,7 @@ export function AppearancePanel() {
 
   return (
     <div className="flex flex-col gap-1 p-3 border-t mt-2">
-      <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 py-2">
+      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-3 py-2">
         Appearance
       </div>
       <div className="px-3 space-y-3">
@@ -151,9 +168,9 @@ export function AppearancePanel() {
 
         <div className="space-y-1.5">
           <label className="text-xs text-muted-foreground flex items-center gap-1"><LayoutTemplate size={12} /> Template</label>
-          <div className="grid grid-cols-4 gap-1">
+          <div className="grid grid-cols-5 gap-1">
             {templates.map((t) => (
-              <button key={t} onClick={() => setTemplate(t)} className={cn("text-[10px] py-1 rounded-md border capitalize transition-colors", template === t ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border hover:bg-muted")}>
+              <button key={t} onClick={() => setTemplate(t)} className={cn("text-[10px] py-1 rounded-md border capitalize transition-colors", template === t ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border hover:bg-muted")} title={t}>
                 {t.slice(0, 4)}
               </button>
             ))}
@@ -193,7 +210,7 @@ export function AppearancePanel() {
 
         <div className="space-y-1.5">
           <label className="text-xs text-muted-foreground">Spacing: {spacing.toFixed(1)}x</label>
-          <input type="range" min={0.8} max={1.5} step={0.1} value={spacing} onChange={(e) => setSpacing(parseFloat(e.target.value))} className="w-full" />
+          <input type="range" min={0.8} max={1.5} step={0.1} value={spacing} onChange={(e) => setSpacing(parseFloat(e.target.value))} className="w-full accent-primary" />
         </div>
       </div>
     </div>

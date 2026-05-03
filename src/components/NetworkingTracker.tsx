@@ -104,7 +104,11 @@ export function NetworkingTracker() {
 
         <div className="space-y-2 max-h-80 overflow-y-auto">
           {contacts.length === 0 && (
-            <p className="text-sm text-muted-foreground text-center py-4">No contacts yet. Add people who can help your job search.</p>
+            <div className="text-center py-8 border-2 border-dashed border-border rounded-lg">
+              <User size={32} className="mx-auto text-muted-foreground/50 mb-3" />
+              <p className="text-sm font-medium text-muted-foreground">No contacts yet</p>
+              <p className="text-xs text-muted-foreground mt-1">Add people who can help your job search</p>
+            </div>
           )}
           {contacts.map((c) => {
             const days = daysSince(c.lastContacted);

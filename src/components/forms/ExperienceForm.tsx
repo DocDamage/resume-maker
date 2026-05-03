@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, GripVertical, Copy } from "lucide-react";
+import { Plus, Trash2, GripVertical, Copy, Briefcase } from "lucide-react";
 import { AIImproveButton } from "@/components/AIImproveButton";
 import { BulletOptimizer } from "@/components/BulletOptimizer";
 import type { ExperienceEntry } from "@/types/resume";
@@ -66,11 +66,11 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
     <div
       ref={setNodeRef}
       style={style}
-      className="border rounded-lg p-4 bg-card space-y-3"
+      className="border rounded-lg p-4 bg-card space-y-3 shadow-sm hover:shadow-md transition-shadow"
     >
       <div className="flex items-start gap-2">
         <button
-          className="mt-1 text-muted-foreground cursor-grab"
+          className="mt-1 text-muted-foreground cursor-grab hover:text-foreground transition-colors"
           {...attributes}
           {...listeners}
         >
@@ -117,7 +117,7 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
                 updateExperience(entry.id, { endDate: e.target.value })
               }
             />
-            <label className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+            <label className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1.5 cursor-pointer">
               <input
                 type="checkbox"
                 checked={entry.current}
@@ -127,8 +127,9 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
                     endDate: e.target.checked ? "" : entry.endDate,
                   })
                 }
+                className="rounded border-border text-primary focus:ring-primary"
               />
-              Current
+              I currently work here
             </label>
           </div>
         </div>
@@ -136,7 +137,7 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-muted-foreground"
+            className="h-7 w-7 text-muted-foreground hover:text-foreground"
             onClick={() => duplicateExperience(entry.id)}
             title="Duplicate"
           >
@@ -145,7 +146,7 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-destructive"
+            className="h-7 w-7 text-destructive hover:bg-destructive/10"
             onClick={() => removeExperience(entry.id)}
           >
             <Trash2 size={16} />
@@ -157,29 +158,32 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
         <Label className="text-xs">Description</Label>
         {entry.description.map((bullet, i) => (
           <div key={i} className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground text-xs">•</span>
-              <Input
+            <div className="flex items-start gap-2">
+              <span className="text-muted-foreground text-xs mt-2">•</span>
+              <textarea
                 value={bullet}
                 onChange={(e) => handleBulletChange(i, e.target.value)}
-                placeholder="Describe your achievement or responsibility"
-                className="text-sm"
+                placeholder="Describe your achievement or responsibility..."
+                rows={2}
+                className="flex-1 min-h-[60px] w-full rounded-md border border-border bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-y"
               />
-              <AIImproveButton
-                type="bullet"
-                content={bullet}
-                onImproved={(text) => handleBulletChange(i, text)}
-                size="sm"
-                className="shrink-0"
-              />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 text-destructive shrink-0"
-                onClick={() => removeBullet(i)}
-              >
-                <Trash2 size={14} />
-              </Button>
+              <div className="flex flex-col gap-1 shrink-0">
+                <AIImproveButton
+                  type="bullet"
+                  content={bullet}
+                  onImproved={(text) => handleBulletChange(i, text)}
+                  size="sm"
+                  className="shrink-0"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 text-destructive shrink-0 hover:bg-destructive/10"
+                  onClick={() => removeBullet(i)}
+                >
+                  <Trash2 size={14} />
+                </Button>
+              </div>
             </div>
             <div className="pl-4">
               <BulletOptimizer
@@ -222,13 +226,26 @@ export function ExperienceForm() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Experience</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between pb-3">
+        <CardTitle className="flex items-center gap-2">
+          <Briefcase size={18} />
+          Experience
+        </CardTitle>
         <Button size="sm" onClick={addExperience}>
           <Plus size={16} className="mr-1" /> Add
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
+        {experience.length === 0 && (
+          <div className="text-center py-8 border-2 border-dashed border-border rounded-lg">
+            <Briefcase size={32} className="mx-auto text-muted-foreground/50 mb-3" />
+            <p className="text-sm font-medium text-muted-foreground">No experience entries yet</p>
+            <p className="text-xs text-muted-foreground mt-1">Add your work history to get started</p>
+            <Button size="sm" variant="outline" className="mt-3" onClick={addExperience}>
+              <Plus size={14} className="mr-1" /> Add Experience
+            </Button>
+          </div>
+        )}
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}

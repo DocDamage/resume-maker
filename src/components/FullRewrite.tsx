@@ -3,17 +3,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useResumeStore } from "@/stores/resumeStore";
 import { aiChat } from "@/utils/aiEngine";
-import { Loader2, Wand2, CheckCircle } from "lucide-react";
+import { Loader2, Wand2, CheckCircle, AlertCircle } from "lucide-react";
 
 export function FullRewrite() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [error, setError] = useState("");
   const resume = useResumeStore((s) => s.resume);
   const loadResume = useResumeStore((s) => s.loadResume);
 
   const handleRewrite = async () => {
     setLoading(true);
     setDone(false);
+    setError("");
     try {
       const prompt = `Rewrite and improve this entire resume. Make it more impactful with strong action verbs, quantified achievements, and professional language. Keep the same structure and factual information but elevate the writing. Output ONLY valid JSON matching this schema:
 
@@ -46,7 +48,7 @@ Current resume JSON:\n${JSON.stringify(resume, null, 2)}`;
       loadResume(improved);
       setDone(true);
     } catch (err) {
-      alert("Rewrite failed: " + String(err));
+      setError("Rewrite failed: " + String(err));
     } finally {
       setLoading(false);
     }
@@ -68,7 +70,13 @@ Current resume JSON:\n${JSON.stringify(resume, null, 2)}`;
           {loading ? <Loader2 size={16} className="animate-spin mr-1" /> : <Wand2 size={16} className="mr-1" />}
           {loading ? "Rewriting..." : "Rewrite Everything"}
         </Button>
-        {done && (
+        {error && (
+          <div className="flex items-start gap-2 text-sm text-destructive bg-destructive/10 border border-destructive/20 p-3 rounded-md">
+            <AlertCircle size={16} className="shrink-0 mt-0.5" />
+            {error}
+          </div>
+        )}
+        {done && !error && (
           <div className="flex items-center gap-2 text-sm text-green-600">
             <CheckCircle size={16} /> Resume rewritten successfully!
           </div>

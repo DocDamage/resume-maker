@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, GripVertical, Copy } from "lucide-react";
+import { Plus, Trash2, GripVertical, Copy, GraduationCap } from "lucide-react";
 import type { EducationEntry } from "@/types/resume";
 import {
   DndContext,
@@ -47,11 +47,11 @@ function EducationItem({ entry }: { entry: EducationEntry }) {
     <div
       ref={setNodeRef}
       style={style}
-      className="border rounded-lg p-4 bg-card space-y-3"
+      className="border rounded-lg p-4 bg-card space-y-3 shadow-sm hover:shadow-md transition-shadow"
     >
       <div className="flex items-start gap-2">
         <button
-          className="mt-1 text-muted-foreground cursor-grab"
+          className="mt-1 text-muted-foreground cursor-grab hover:text-foreground transition-colors"
           {...attributes}
           {...listeners}
         >
@@ -123,7 +123,7 @@ function EducationItem({ entry }: { entry: EducationEntry }) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-muted-foreground"
+            className="h-7 w-7 text-muted-foreground hover:text-foreground"
             onClick={() => duplicateEducation(entry.id)}
             title="Duplicate"
           >
@@ -132,7 +132,7 @@ function EducationItem({ entry }: { entry: EducationEntry }) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-destructive"
+            className="h-7 w-7 text-destructive hover:bg-destructive/10"
             onClick={() => removeEducation(entry.id)}
           >
             <Trash2 size={16} />
@@ -167,13 +167,26 @@ export function EducationForm() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Education</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between pb-3">
+        <CardTitle className="flex items-center gap-2">
+          <GraduationCap size={18} />
+          Education
+        </CardTitle>
         <Button size="sm" onClick={addEducation}>
           <Plus size={16} className="mr-1" /> Add
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
+        {education.length === 0 && (
+          <div className="text-center py-8 border-2 border-dashed border-border rounded-lg">
+            <GraduationCap size={32} className="mx-auto text-muted-foreground/50 mb-3" />
+            <p className="text-sm font-medium text-muted-foreground">No education entries yet</p>
+            <p className="text-xs text-muted-foreground mt-1">Add your degrees, bootcamps, or certifications</p>
+            <Button size="sm" variant="outline" className="mt-3" onClick={addEducation}>
+              <Plus size={14} className="mr-1" /> Add Education
+            </Button>
+          </div>
+        )}
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}

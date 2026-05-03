@@ -48,6 +48,11 @@ html, body, #root {
   }
 }
 
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Paper sizing for preview */
 .a4-page {
   width: 210mm;
@@ -79,6 +84,13 @@ html, body, #root {
   margin: 0 auto;
 }
 
+/* Dark mode paper overrides */
+.dark .a4-page,
+.dark .letter-page,
+.dark .legal-page {
+  background: #0f172a;
+}
+
 @media print {
   body * {
     visibility: hidden;
@@ -96,10 +108,39 @@ html, body, #root {
     padding: 0;
     box-shadow: none;
   }
-  .a4-page {
-    box-shadow: none;
-    margin: 0;
-    width: 100%;
-    min-height: auto;
+  .a4-page, .letter-page, .legal-page {
+    box-shadow: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: auto !important;
+    background: white !important;
   }
+  .dark .a4-page,
+  .dark .letter-page,
+  .dark .legal-page {
+    background: white !important;
+    color: #0f172a !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }

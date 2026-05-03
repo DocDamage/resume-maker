@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, GripVertical, Copy } from "lucide-react";
+import { Plus, Trash2, GripVertical, Copy, FolderGit2 } from "lucide-react";
 import type { Project } from "@/types/resume";
 import {
   DndContext,
@@ -52,7 +52,7 @@ function ProjectItem({ project }: { project: Project }) {
     >
       <div className="flex items-start gap-2">
         <button
-          className="mt-1 text-muted-foreground cursor-grab"
+          className="mt-1 text-muted-foreground cursor-grab hover:text-foreground transition-colors"
           {...attributes}
           {...listeners}
         >
@@ -104,7 +104,7 @@ function ProjectItem({ project }: { project: Project }) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-destructive"
+            className="h-7 w-7 text-destructive hover:bg-destructive/10"
             onClick={() => removeProject(project.id)}
           >
             <Trash2 size={16} />
@@ -139,13 +139,26 @@ export function ProjectsForm() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Projects</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between pb-3">
+        <CardTitle className="flex items-center gap-2">
+          <FolderGit2 size={18} />
+          Projects
+        </CardTitle>
         <Button size="sm" onClick={addProject}>
           <Plus size={16} className="mr-1" /> Add
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
+        {projects.length === 0 && (
+          <div className="text-center py-8 border-2 border-dashed border-border rounded-lg">
+            <FolderGit2 size={32} className="mx-auto text-muted-foreground/50 mb-3" />
+            <p className="text-sm font-medium text-muted-foreground">No projects yet</p>
+            <p className="text-xs text-muted-foreground mt-1">Add personal projects, open source, or portfolio pieces</p>
+            <Button size="sm" variant="outline" className="mt-3" onClick={addProject}>
+              <Plus size={14} className="mr-1" /> Add Project
+            </Button>
+          </div>
+        )}
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}

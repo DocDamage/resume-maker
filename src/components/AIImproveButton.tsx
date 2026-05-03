@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { improveSummary, improveBullet, improveSkills } from "@/utils/aiImprover";
-import { Loader2, Wand2 } from "lucide-react";
+import { Loader2, Wand2, AlertCircle } from "lucide-react";
 
 interface AIImproveButtonProps {
   type: "summary" | "bullet" | "skills";
@@ -19,10 +19,12 @@ export function AIImproveButton({
   size = "sm",
 }: AIImproveButtonProps) {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleClick = async () => {
+    setError("");
     if (!content.trim()) {
-      alert("Please add some content first.");
+      setError("Add some content first before improving.");
       return;
     }
     setLoading(true);
@@ -38,28 +40,36 @@ export function AIImproveButton({
       }
       onImproved(result);
     } catch (err) {
-      alert(String(err));
+      setError(String(err));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Button
-      variant="outline"
-      size={size}
-      onClick={handleClick}
-      disabled={loading}
-      className={className}
-    >
-      {loading ? (
-        <Loader2 size={14} className="animate-spin mr-1" />
-      ) : (
-        <Wand2 size={14} className="mr-1" />
+    <div className={className}>
+      <Button
+        variant="outline"
+        size={size}
+        onClick={handleClick}
+        disabled={loading}
+        title={type === "summary" ? "Improve Summary" : type === "bullet" ? "Improve Bullet" : "Improve Skills"}
+      >
+        {loading ? (
+          <Loader2 size={14} className="animate-spin mr-1" />
+        ) : (
+          <Wand2 size={14} className="mr-1" />
+        )}
+        {type === "summary" && "Improve Summary"}
+        {type === "bullet" && "Improve Bullet"}
+        {type === "skills" && "Improve Skills"}
+      </Button>
+      {error && (
+        <div className="flex items-start gap-1 mt-1 text-[10px] text-destructive">
+          <AlertCircle size={10} className="shrink-0 mt-0.5" />
+          {error}
+        </div>
       )}
-      {type === "summary" && "Improve Summary"}
-      {type === "bullet" && "Improve Bullet"}
-      {type === "skills" && "Improve Skills"}
-    </Button>
+    </div>
   );
 }
