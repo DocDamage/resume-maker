@@ -29,6 +29,7 @@ import { CareerTrajectory } from "@/components/CareerTrajectory";
 import { EmailTemplates } from "@/components/EmailTemplates";
 import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
 import { DataBackup } from "@/components/DataBackup";
+import { LaTeXExporter } from "@/components/LaTeXExporter";
 import { SmartSuggestionsPanel } from "@/components/SmartSuggestionsPanel";
 import { ATSHeatmap } from "@/components/ATSHeatmap";
 import { GapNarrative } from "@/components/GapNarrative";
@@ -112,6 +113,7 @@ function EditorPanel({ onUpload }: { onUpload: () => void }) {
             <div className="space-y-4">
               <RecruiterShare />
               <PortfolioExporter />
+              <LaTeXExporter />
               <ResumeReview />
               <DataBackup />
             </div>

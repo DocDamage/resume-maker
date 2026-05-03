@@ -1,0 +1,20 @@
+{
+  "name": "Resume Maker",
+  "short_name": "ResumeMaker",
+  "description": "AI-powered resume builder with job tracking, ATS scoring, and career tools",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "lang": "en"
+}
